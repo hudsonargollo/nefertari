@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+public/nefertari1.png
+public/nefertari2.png
+public/nefertari-logo.jpeg
