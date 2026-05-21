@@ -239,7 +239,7 @@ export default function BrandGuideV2() {
         </div>
 
         {/* Logo variants */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5 max-w-2xl mx-auto">
           {/* Versão Principal */}
           <div className="rounded-2xl overflow-hidden border-2 border-[#C8941A]/30 shadow-lg">
             <div className="h-52 flex items-center justify-center p-6" style={{ backgroundColor: '#FAF5E8' }}>
@@ -262,11 +262,35 @@ export default function BrandGuideV2() {
               }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo-transparent.webp" alt="Fundo Transparente" className="max-h-full max-w-full object-contain" />
+              <img src="/nefertari-logo-v2.png" alt="Fundo Transparente" className="max-h-full max-w-full object-contain" />
             </div>
             <div className="p-5 bg-white text-center">
               <p className="text-[#C8941A] text-xs font-bold tracking-widest uppercase mb-1">Fundo Transparente</p>
-              <p className="text-[#6B6050] text-xs">Arquivo .webp para uso digital</p>
+              <p className="text-[#6B6050] text-xs">Uso digital sobre qualquer fundo</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Golden logo — premium packaging */}
+        <div className="rounded-2xl overflow-hidden border border-[#C8941A]/30 mb-10 max-w-2xl mx-auto">
+          <div
+            className="flex flex-col md:flex-row items-center gap-0"
+            style={{ background: 'linear-gradient(135deg, #14100C 0%, #2A1A08 100%)' }}
+          >
+            <div className="md:w-56 shrink-0 flex items-center justify-center p-8">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/nefertari-logo-golden.png" alt="Versão Dourada" className="w-full max-w-[160px] object-contain" />
+            </div>
+            <div className="flex-1 p-7 md:border-l border-t md:border-t-0 border-[#C8941A]/15">
+              <span className="inline-flex items-center px-3 py-1 rounded-full border border-[#C8941A]/30 text-[#C8941A] text-[10px] font-bold tracking-widest uppercase mb-3">
+                Edição Premium
+              </span>
+              <p style={{ fontFamily: 'Playfair Display, Georgia, serif', color: '#FAF5E8' }} className="text-lg font-semibold mb-2">
+                Versão Dourada
+              </p>
+              <p className="text-[#A89070] text-sm leading-relaxed">
+                Indicada para embalagens de blends premium, rótulos artesanais e peças promocionais de alto padrão — onde o ouro monocromático comunica exclusividade e cuidado.
+              </p>
             </div>
           </div>
         </div>
