@@ -54,27 +54,27 @@ const mcQuestions = [
     id: 'mc_identity',
     question: 'A identidade visual apresentada representa a Nefertari?',
     options: [
-      { value: 'yes_fully',  label: 'Sim, totalmente — é exatamente o que eu imaginei' },
-      { value: 'yes_mostly', label: 'Sim, mas mudaria alguns elementos' },
-      { value: 'not_yet',    label: 'Ainda não representa completamente' },
+      { value: 'yes_fully',  label: 'Sim, totalmente — é exatamente o que eu imaginei',  followUp: null },
+      { value: 'yes_mostly', label: 'Sim, mas mudaria alguns elementos',                  followUp: 'O que você mudaria ou ajustaria?' },
+      { value: 'not_yet',    label: 'Ainda não representa completamente',                 followUp: 'O que está faltando ou destoa da sua visão?' },
     ],
   },
   {
     id: 'mc_palette',
     question: 'Como você se sente em relação à paleta de cores?',
     options: [
-      { value: 'perfect',  label: 'Perfeita — ouro, terracota e verde são a cara da marca' },
-      { value: 'almost',   label: 'Quase lá — alguma cor precisa de ajuste' },
-      { value: 'rethink',  label: 'Gostaria de repensar as cores' },
+      { value: 'perfect',  label: 'Perfeita — ouro, terracota e verde são a cara da marca', followUp: null },
+      { value: 'almost',   label: 'Quase lá — alguma cor precisa de ajuste',                followUp: 'Qual cor mudaria e para qual direção?' },
+      { value: 'rethink',  label: 'Gostaria de repensar as cores',                          followUp: 'O que você tem em mente? Referências, sensações, palavras.' },
     ],
   },
   {
     id: 'mc_voice',
     question: 'O tom de voz da marca (sofisticado, com propósito, real e regal) está:',
     options: [
-      { value: 'perfect',   label: 'Certeiro — é exatamente como quero falar com meus clientes' },
-      { value: 'almost',    label: 'Quase lá — falta algum elemento' },
-      { value: 'revision',  label: 'Precisa de revisão' },
+      { value: 'perfect',  label: 'Certeiro — é exatamente como quero falar com meus clientes', followUp: null },
+      { value: 'almost',   label: 'Quase lá — falta algum elemento',                            followUp: 'O que está faltando? Como você descreveria o que sente?' },
+      { value: 'revision', label: 'Precisa de revisão',                                          followUp: 'Como você gostaria que a marca soasse?' },
     ],
   },
 ];
@@ -100,17 +100,22 @@ const proximas = [
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface FeedbackFields {
-  mc_identity: string;
-  mc_palette:  string;
-  mc_voice:    string;
-  q_tocou:     string;
-  q_mudaria:   string;
+  mc_identity:      string;
+  mc_palette:       string;
+  mc_voice:         string;
+  mc_identity_note: string;
+  mc_palette_note:  string;
+  mc_voice_note:    string;
+  q_tocou:          string;
+  q_mudaria:        string;
 }
 
 interface SavedFile { name: string; type: string; size: number; }
 
 const DEFAULTS: FeedbackFields = {
-  mc_identity: '', mc_palette: '', mc_voice: '', q_tocou: '', q_mudaria: '',
+  mc_identity: '', mc_palette: '', mc_voice: '',
+  mc_identity_note: '', mc_palette_note: '', mc_voice_note: '',
+  q_tocou: '', q_mudaria: '',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -408,23 +413,43 @@ export default function Milestone01() {
             <form onSubmit={handleSubmit} className="space-y-8">
 
               {/* ── Multiple choice ─── */}
-              {mcQuestions.map((q) => (
-                <div key={q.id} className="rounded-2xl border border-[#E8D9BA] bg-white p-7">
-                  <p style={{ fontFamily: 'Playfair Display, Georgia, serif' }} className="text-lg font-semibold text-[#14100C] mb-5">
-                    {q.question}
-                  </p>
-                  <div className="space-y-3">
-                    {q.options.map(opt => (
-                      <MCOption
-                        key={opt.value}
-                        label={opt.label}
-                        selected={feedback[q.id as keyof FeedbackFields] === opt.value}
-                        onClick={() => setFeedback(prev => ({ ...prev, [q.id]: opt.value }))}
-                      />
-                    ))}
+              {mcQuestions.map((q) => {
+                const selectedOpt = q.options.find(o => o.value === feedback[q.id as keyof FeedbackFields]);
+                const noteKey = `${q.id}_note` as keyof FeedbackFields;
+                return (
+                  <div key={q.id} className="rounded-2xl border border-[#E8D9BA] bg-white p-7">
+                    <p style={{ fontFamily: 'Playfair Display, Georgia, serif' }} className="text-lg font-semibold text-[#14100C] mb-5">
+                      {q.question}
+                    </p>
+                    <div className="space-y-3">
+                      {q.options.map(opt => (
+                        <MCOption
+                          key={opt.value}
+                          label={opt.label}
+                          selected={feedback[q.id as keyof FeedbackFields] === opt.value}
+                          onClick={() => setFeedback(prev => ({ ...prev, [q.id]: opt.value }))}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Follow-up textarea — appears when selected option has a prompt */}
+                    {selectedOpt?.followUp && (
+                      <div className="mt-5 pt-5 border-t border-[#F0E8D4]">
+                        <label className="block text-[#C8941A] text-xs font-semibold uppercase tracking-widest mb-2">
+                          {selectedOpt.followUp}
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={feedback[noteKey]}
+                          onChange={e => setFeedback(prev => ({ ...prev, [noteKey]: e.target.value }))}
+                          placeholder="Escreva à vontade — quanto mais detalhe, melhor..."
+                          className="w-full rounded-xl border border-[#E8D9BA] bg-[#FAF5E8] px-4 py-3 text-sm text-[#14100C] placeholder:text-[#C4B8A0] focus:outline-none focus:border-[#C8941A] resize-none transition-colors"
+                        />
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {/* ── Open questions ─── */}
               <div className="rounded-2xl border border-[#E8D9BA] bg-white p-7">
