@@ -165,31 +165,17 @@ export default function BrandGuideV2() {
         }}
         className="px-6 py-24 flex flex-col items-center text-center"
       >
-        <div className="mb-8 relative w-28 h-28">
+        <div className="mb-8 relative w-64 h-56">
           <Image
-            src="/nefertari-logo-golden.png"
-            alt="Nefertari Logo"
+            src="/nefertari-logo-v2.png"
+            alt="Nefertari Cozinha Viva — Logo"
             fill
             className="object-contain"
           />
         </div>
 
-        <p className="text-[#C8941A] tracking-[0.35em] text-xs font-medium uppercase mb-4">
+        <p className="text-[#C8941A] tracking-[0.35em] text-xs font-medium uppercase mb-10">
           Guia de Identidade Visual
-        </p>
-
-        <h1
-          style={{ fontFamily: 'Playfair Display, Georgia, serif', color: '#14100C', letterSpacing: '-0.01em' }}
-          className="text-5xl md:text-6xl font-bold mb-3"
-        >
-          Nefertari
-        </h1>
-
-        <p
-          style={{ fontFamily: 'Playfair Display, Georgia, serif', color: '#C8941A' }}
-          className="text-xl md:text-2xl font-semibold tracking-widest uppercase mb-6"
-        >
-          Cozinha Viva
         </p>
 
         <div className="flex items-center gap-3 mb-8">
