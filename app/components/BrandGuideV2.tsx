@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { Check, Copy } from 'lucide-react';
 
 // ─── Palette ─────────────────────────────────────────────────────────────────
@@ -165,11 +164,13 @@ export default function BrandGuideV2() {
         }}
         className="px-6 py-24 flex flex-col items-center text-center"
       >
-        <div className="mb-8 relative w-64 h-56">
-          <Image
+        <div className="mb-8">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src="/nefertari-logo-v2.png"
             alt="Nefertari Cozinha Viva — Logo"
-            fill
+            width={280}
+            height={240}
             className="object-contain"
           />
         </div>
