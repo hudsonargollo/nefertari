@@ -316,7 +316,7 @@ export default function Milestone01() {
         </div>
 
         <Link
-          href="/identidade-v2"
+          href="/identidade-visual"
           className="group flex flex-col md:flex-row rounded-2xl overflow-hidden border-2 border-[#C8941A]/40 hover:border-[#C8941A]/70 hover:shadow-xl transition-all duration-300 max-w-2xl mx-auto"
         >
           <div
