@@ -239,27 +239,15 @@ export default function BrandGuideV2() {
         </div>
 
         {/* Logo variants */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10 max-w-2xl mx-auto">
           {/* Versão Principal */}
-          <div className="rounded-2xl overflow-hidden border border-[#E8D9BA]">
-            <div className="h-52 flex items-center justify-center p-6" style={{ backgroundColor: '#14100C' }}>
+          <div className="rounded-2xl overflow-hidden border-2 border-[#C8941A]/30 shadow-lg">
+            <div className="h-52 flex items-center justify-center p-6" style={{ backgroundColor: '#FAF5E8' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/nefertari-logo-v2.png" alt="Versão Principal" className="max-h-full max-w-full object-contain" />
             </div>
             <div className="p-5 bg-white text-center">
               <p className="text-[#C8941A] text-xs font-bold tracking-widest uppercase mb-1">Versão Principal</p>
-              <p className="text-[#6B6050] text-xs">Sobre fundo escuro</p>
-            </div>
-          </div>
-
-          {/* Versão Clara */}
-          <div className="rounded-2xl overflow-hidden border-2 border-[#C8941A]/30 shadow-lg">
-            <div className="h-52 flex items-center justify-center p-6" style={{ backgroundColor: '#FAF5E8' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/nefertari-logo-v2.png" alt="Versão Clara" className="max-h-full max-w-full object-contain" />
-            </div>
-            <div className="p-5 bg-white text-center">
-              <p className="text-[#C8941A] text-xs font-bold tracking-widest uppercase mb-1">Versão Clara</p>
               <p className="text-[#6B6050] text-xs">Sobre fundo creme</p>
             </div>
           </div>
