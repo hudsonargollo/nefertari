@@ -284,7 +284,7 @@ export default function Milestone01() {
       >
         <div className="max-w-3xl mx-auto">
           <span className="inline-flex items-center px-4 py-1.5 rounded-full border border-[#C8941A]/30 text-[#C8941A] text-xs font-bold tracking-widest uppercase mb-8">
-            Milestone 01 · Maio 2026
+            Milestone 1 de 3 · Maio 2026
           </span>
           <h1 style={{ fontFamily: 'Playfair Display, Georgia, serif', color: '#FAF5E8', lineHeight: 1.15 }} className="text-4xl md:text-6xl font-bold mb-4">
             Branding &
