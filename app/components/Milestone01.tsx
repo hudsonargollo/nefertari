@@ -116,7 +116,7 @@ export default function Milestone01() {
           </div>
 
           <p className="text-[#A89880] max-w-xl mx-auto text-base leading-relaxed">
-            Que reunião fantástica. O áudio trouxe uma clareza imensa sobre o momento da Nefertari — a transição da Safrão da Terra, a abertura além do 100% vegano, a profundidade que você quer dar ao projeto. A base está extremamente sólida.
+            A transição da Safrão da Terra para a Nefertari marca uma virada estratégica inteligente — abrir o leque além do 100% vegano, sem perder a essência. A base conceitual está definida e o projeto tem profundidade para crescer com consistência.
           </p>
         </div>
       </section>
