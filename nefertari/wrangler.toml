@@ -1,7 +1,0 @@
-name = "nefertari"
-pages_build_output_dir = "out"
-compatibility_date = "2025-01-01"
-
-[vars]
-# Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
-# in Cloudflare Pages → Settings → Environment Variables

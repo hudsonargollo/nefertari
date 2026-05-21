@@ -1,0 +1,7 @@
+name = "nefertari"
+pages_build_output_dir = "out"
+compatibility_date = "2025-01-01"
+
+[[kv_namespaces]]
+binding = "NEFERTARI_KV"
+id = "293fde73f8aa409e9512d640a48628c0"

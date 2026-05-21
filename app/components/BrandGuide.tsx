@@ -410,7 +410,7 @@ export default function BrandGuide() {
             {voiceExamples.map((ex, i) => (
               <div key={i} className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${openVoice === i ? t.borderGold : t.border}`, transition: 'border-color 0.2s' }}>
                 <button
-                  onClick={() => setOpenVoice(openVoice === i ? null : i)}
+                  onClick={() => setOpenVoice(prev => prev === i ? null : i)}
                   className="w-full flex items-center justify-between px-6 py-4 cursor-pointer transition-colors"
                   style={{ backgroundColor: t.bgCard }}
                 >

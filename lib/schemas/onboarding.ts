@@ -18,4 +18,3 @@ export const onboardingSchema = z.object({
 
 export type OnboardingValues = z.infer<typeof onboardingSchema>;
 
-export const CLIENT_SLUG = 'nefertari';
