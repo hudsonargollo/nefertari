@@ -41,7 +41,10 @@ const insights = [
   {
     num: '05', title: 'Sistema de Pedidos', icon: '❧',
     items: [
-      { label: 'Atendimento', value: 'Fluxo via WhatsApp automatizado mas humanizado. Atalhos e mensagens prontas que mantêm o tom de voz da marca e entregam o cardápio de forma ágil.' },
+      { label: 'Link de pedido próprio', value: 'Cardápio digital acessível pelo link na bio — o cliente navega, escolhe e faz o pedido direto, sem sair para um marketplace e sem taxas.' },
+      { label: 'Painel de gerenciamento', value: 'Painel interno para visualizar, confirmar e acompanhar todos os pedidos em tempo real. Controle total do fluxo de operação, sem depender de terceiros.' },
+      { label: 'WhatsApp integrado', value: 'Atendimento automatizado mas humanizado — atalhos e mensagens prontas que mantêm o tom de voz da marca, confirmam pedidos e entregam o cardápio de forma ágil.' },
+      { label: 'Estratégia anti-taxa', value: 'iFood funciona apenas como vitrine de descoberta. Todo o storytelling, embalagens e QR codes direcionam o cliente para o link próprio — convertendo sem a taxa de 26%.' },
     ],
   },
 ];
