@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { LogOut, RefreshCw, Clock, MapPin, Package, CheckCircle2, Loader2, ChevronRight, Settings, X } from 'lucide-react';
+import Link from 'next/link';
+import { LogOut, RefreshCw, Clock, MapPin, Package, CheckCircle2, Loader2, ChevronRight, Settings, X, Users } from 'lucide-react';
 
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const G = {
@@ -425,6 +426,9 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
                                                   color: G.muted, padding: '6px' }}>
             <RefreshCw size={16} />
           </button>
+          <Link href="/painel/clientes" style={{ color: G.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }}>
+            <Users size={16} />
+          </Link>
           <button onClick={() => setPinModal(true)} style={{ background: 'none', border: 'none',
                                                               cursor: 'pointer', color: G.muted, padding: '6px' }}>
             <Settings size={16} />

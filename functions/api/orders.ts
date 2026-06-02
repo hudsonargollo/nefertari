@@ -1,5 +1,17 @@
 interface Env { NEFERTARI_KV: KVNamespace; }
 
+export interface CRMCustomer {
+  phone:      string;
+  name:       string;
+  orderCount: number;
+  totalSpent: number;
+  firstOrder: string;
+  lastOrder:  string;
+  orders:     string[];
+  notes:      string;
+  tags:       string[];
+}
+
 export interface OrderItem { id: string; name: string; price: number; qty: number; }
 
 export interface Order {
@@ -54,17 +66,40 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     // Save order
     await env.NEFERTARI_KV.put(orderKey(id), JSON.stringify(order));
 
-    // Update indexes
+    // Update order indexes
     const [indexRaw, activeRaw] = await Promise.all([
       env.NEFERTARI_KV.get(INDEX_KEY,  { type: 'json' }),
       env.NEFERTARI_KV.get(ACTIVE_KEY, { type: 'json' }),
     ]);
-    const index  = ([id, ...((indexRaw  as string[] | null) ?? [])]).slice(0, 200); // cap at 200
+    const index  = ([id, ...((indexRaw  as string[] | null) ?? [])]).slice(0, 200);
     const active = ([id, ...((activeRaw as string[] | null) ?? [])]);
+
+    // Auto-capture CRM customer profile
+    const phone      = body.customer.phone.replace(/\D/g, '');
+    const crmKey     = `crm:${phone}`;
+    const crmIdxKey  = 'crm:index';
+    const existing   = await env.NEFERTARI_KV.get(crmKey, { type: 'json' }) as CRMCustomer | null;
+    const crmIdx     = (await env.NEFERTARI_KV.get(crmIdxKey, { type: 'json' }) as string[] | null) ?? [];
+
+    const updated: CRMCustomer = {
+      phone,
+      name:        body.customer.name,
+      orderCount:  (existing?.orderCount  ?? 0) + 1,
+      totalSpent:  (existing?.totalSpent  ?? 0) + body.total,
+      firstOrder:  existing?.firstOrder ?? now,
+      lastOrder:   now,
+      orders:      [id, ...(existing?.orders ?? [])].slice(0, 50),
+      notes:       existing?.notes ?? '',
+      tags:        existing?.tags  ?? [],
+    };
+
+    const newCrmIdx = crmIdx.includes(phone) ? crmIdx : [phone, ...crmIdx];
 
     await Promise.all([
       env.NEFERTARI_KV.put(INDEX_KEY,  JSON.stringify(index)),
       env.NEFERTARI_KV.put(ACTIVE_KEY, JSON.stringify(active)),
+      env.NEFERTARI_KV.put(crmKey,     JSON.stringify(updated)),
+      env.NEFERTARI_KV.put(crmIdxKey,  JSON.stringify(newCrmIdx)),
     ]);
 
     return Response.json({ ok: true, id }, { headers: cors() });
