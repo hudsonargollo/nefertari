@@ -18,9 +18,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Proposta Digital 360º — Nefertari Cozinha Viva",
-  description:
-    "Ecossistema Digital 360º para transformar a essência da Nefertari em uma máquina previsível de vendas.",
+  title: 'Nefertari Cozinha Viva — Jequié, BA',
+  description: 'Lanches artesanais feitos com ingredientes que você reconhece. Hamburguers, wraps e acompanhamentos — sem ultraprocessados, sem taxas de marketplace.',
 };
 
 export default function RootLayout({
