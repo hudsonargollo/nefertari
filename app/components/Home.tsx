@@ -172,64 +172,63 @@ export default function Home() {
       <Nav />
 
       {/* ═══════════════════════════════════════════════════════════════════
-          HERO
+          HERO — fits 100dvh
       ═══════════════════════════════════════════════════════════════════ */}
       <section style={{
-        minHeight: '100dvh', display: 'flex', flexDirection: 'column',
+        height: '100dvh', display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-        padding: '6rem 1.5rem 4rem',
-        background: `radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,148,26,0.1) 0%, transparent 70%),
-                     radial-gradient(ellipse 60% 40% at 50% 100%, rgba(107,140,62,0.07) 0%, transparent 60%),
+        padding: '5rem 1.5rem 3rem', position: 'relative',
+        background: `radial-gradient(ellipse 70% 50% at 50% 10%, rgba(200,148,26,0.12) 0%, transparent 65%),
+                     radial-gradient(ellipse 50% 35% at 50% 95%, rgba(107,140,62,0.06) 0%, transparent 55%),
                      ${G.dark}`,
       }}>
         {/* logo */}
-        <div style={{ marginBottom: '2.5rem' }}>
+        <div style={{ marginBottom: '1.25rem' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/nefertari-logo-v2.png" alt="Nefertari Cozinha Viva"
-               style={{ width: 'clamp(200px, 40vw, 320px)', height: 'auto', objectFit: 'contain' }} />
+               style={{ width: 'clamp(140px, 22vw, 210px)', height: 'auto', objectFit: 'contain' }} />
         </div>
 
-        {/* tag */}
+        {/* location tag */}
         <SectionTag label="Jequié · Bahia" light />
-        <div style={{ height: '1.5rem' }} />
+        <div style={{ height: '1.1rem' }} />
 
         {/* headline */}
-        <h1 style={{ fontFamily: serif, fontSize: 'clamp(2.4rem, 7vw, 5rem)', fontWeight: 700,
-                     lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 1.25rem', maxWidth: '700px' }}>
+        <h1 style={{ fontFamily: serif, fontSize: 'clamp(2rem, 5.5vw, 4rem)', fontWeight: 700,
+                     lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 1rem', maxWidth: '640px' }}>
           Alimentar o corpo<br />
           <span style={{ color: G.gold }}>como um ato sagrado.</span>
         </h1>
 
         {/* sub */}
-        <p style={{ color: G.muted, fontSize: 'clamp(0.95rem, 2vw, 1.1rem)', lineHeight: 1.7,
-                    maxWidth: '480px', margin: '0 auto 2.5rem' }}>
-          Lanches artesanais feitos com ingredientes que você reconhece,
-          em receitas que respeitam seu paladar e o seu tempo.
+        <p style={{ color: G.muted, fontSize: 'clamp(0.875rem, 1.8vw, 1rem)', lineHeight: 1.65,
+                    maxWidth: '400px', margin: '0 auto 1.75rem' }}>
+          Ingredientes reais. Receitas com intenção.<br />
+          Feito à mão — para quem não abre mão de comer bem.
         </p>
 
         {/* CTAs */}
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           <Link href="/cardapio"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                         background: G.gold, color: G.dark, padding: '0.85rem 1.75rem',
-                         borderRadius: '99px', fontWeight: 700, fontSize: '0.95rem',
+                         background: G.gold, color: G.dark, padding: '0.8rem 1.6rem',
+                         borderRadius: '99px', fontWeight: 700, fontSize: '0.9rem',
                          textDecoration: 'none', letterSpacing: '0.02em' }}>
-            Ver cardápio <ArrowRight size={16} />
+            Fazer meu pedido <ArrowRight size={15} />
           </Link>
           <a href="#conceito"
              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
                       border: `1px solid ${G.border}`, color: G.muted,
-                      padding: '0.85rem 1.75rem', borderRadius: '99px',
-                      fontSize: '0.9rem', textDecoration: 'none' }}>
+                      padding: '0.8rem 1.6rem', borderRadius: '99px',
+                      fontSize: '0.875rem', textDecoration: 'none' }}>
             Nossa história
           </a>
         </div>
 
         {/* scroll indicator */}
-        <div style={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)',
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem',
+        <div style={{ position: 'absolute', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
                       animation: 'pulse 2s ease-in-out infinite' }}>
-          <div style={{ width: '1px', height: '40px', background: `linear-gradient(to bottom, transparent, ${G.gold}60)` }} />
+          <div style={{ width: '1px', height: '36px', background: `linear-gradient(to bottom, transparent, ${G.gold}50)` }} />
         </div>
       </section>
 
