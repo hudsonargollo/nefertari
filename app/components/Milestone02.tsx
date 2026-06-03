@@ -279,7 +279,7 @@ export default function Milestone02() {
                 </div>
               </div>
               <div style={{ marginTop: 'auto', padding: '0 1.5rem 1.25rem' }}>
-                <Link href={d.href} target={d.href.startsWith('/painel') ? '_blank' : undefined}
+                <Link href={d.href} target="_blank" rel="noopener noreferrer"
                       style={{
                         display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
                         color: d.color, fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none',
@@ -289,6 +289,45 @@ export default function Milestone02() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── Acesso & PINs ── */}
+      <section style={{ padding: '2rem 1.5rem 0' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+
+          {/* Admin PIN */}
+          <div style={{ background: '#fff', borderRadius: '1rem', border: `1px solid ${G.border}`,
+                        padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>🔐</span>
+            <div>
+              <p style={{ fontWeight: 700, fontSize: '0.88rem', color: G.dark, marginBottom: '0.25rem' }}>
+                Painel da Cozinha — Acesso admin
+              </p>
+              <p style={{ color: '#6B5040', fontSize: '0.82rem', lineHeight: 1.6, marginBottom: '0.5rem' }}>
+                Acesse em <strong>/painel</strong> com o PIN padrão <code style={{ background: G.sand, padding: '0.1rem 0.4rem', borderRadius: '0.3rem', fontWeight: 700 }}>1234</code>. Troque imediatamente em ⚙️ Configurações.
+              </p>
+              <Link href="/painel" target="_blank" rel="noopener noreferrer"
+                    style={{ color: G.terra, fontSize: '0.78rem', fontWeight: 600, textDecoration: 'none' }}>
+                Acessar painel →
+              </Link>
+            </div>
+          </div>
+
+          {/* Customer loyalty PIN */}
+          <div style={{ background: '#fff', borderRadius: '1rem', border: `1px solid ${G.border}`,
+                        padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>⭐</span>
+            <div>
+              <p style={{ fontWeight: 700, fontSize: '0.88rem', color: G.dark, marginBottom: '0.25rem' }}>
+                Programa de Fidelidade — PIN do cliente
+              </p>
+              <p style={{ color: '#6B5040', fontSize: '0.82rem', lineHeight: 1.6 }}>
+                Clientes que se cadastram no Selos Sagrados recebem o PIN padrão <code style={{ background: G.sand, padding: '0.1rem 0.4rem', borderRadius: '0.3rem', fontWeight: 700 }}>1234</code> via mensagem de boas-vindas e podem alterá-lo no perfil.
+              </p>
+            </div>
+          </div>
+
         </div>
       </section>
 
