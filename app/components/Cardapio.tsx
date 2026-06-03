@@ -637,26 +637,31 @@ export default function Cardapio() {
           </div>
 
           {/* right: theme toggle + cart */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.5rem' }}>
             <ThemeToggle dark={dark} onToggle={toggle} position="static" />
-            {itemCount > 0 && (
-              <button onClick={() => setCartOpen(true)} style={{
-                width: '36px', height: '36px', borderRadius: '50%',
-                background: G.gold, border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                position: 'relative',
-              }}>
-                <ShoppingBag size={15} color="#14100C" />
-                <span style={{ position: 'absolute', top: '-4px', right: '-4px',
-                               background: T.bg, color: G.gold, borderRadius: '50%',
-                               width: '16px', height: '16px', fontSize: '0.6rem',
-                               fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                               border: `1px solid ${G.gold}` }}>
-                  {itemCount}
-                </span>
-              </button>
-            )}
-            {itemCount === 0 && <div style={{ width: '36px' }} />}
+            <div style={{ width: '36px', height: '36px', flexShrink: 0, position: 'relative' }}>
+              {itemCount > 0 && (
+                <>
+                  <button onClick={() => setCartOpen(true)} style={{
+                    width: '36px', height: '36px', borderRadius: '50%',
+                    background: G.gold, border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: 0, flexShrink: 0,
+                  }}>
+                    <ShoppingBag size={15} color="#14100C" />
+                  </button>
+                  <span style={{
+                    position: 'absolute', top: '-4px', right: '-4px',
+                    background: T.bg, color: G.gold, borderRadius: '50%',
+                    width: '16px', height: '16px', fontSize: '0.6rem',
+                    fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: `1px solid ${G.gold}`, pointerEvents: 'none',
+                  }}>
+                    {itemCount}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </header>
