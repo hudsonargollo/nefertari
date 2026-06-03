@@ -61,7 +61,8 @@ function CartPanel({ cart, onClose, onUpdateQty, onCheckout, total }: {
                                        zIndex: 90, backdropFilter: 'blur(6px)' }} />
       <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: 'min(400px,100vw)',
                     background: G.card, zIndex: 91, display: 'flex', flexDirection: 'column',
-                    borderLeft: `1px solid ${G.border}`, boxShadow: '-8px 0 40px rgba(0,0,0,0.4)' }}>
+                    borderLeft: `1px solid ${G.border}`, boxShadow: '-8px 0 40px rgba(0,0,0,0.4)',
+                    overflowY: 'hidden' }}>
 
         <div style={{ padding: '1.25rem 1.5rem', borderBottom: `1px solid ${G.border}`,
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -106,8 +107,14 @@ function CartPanel({ cart, onClose, onUpdateQty, onCheckout, total }: {
         </div>
 
         {cart.length > 0 && (
-          <div style={{ padding: '1.25rem 1.5rem', borderTop: `1px solid ${G.border}` }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{
+            padding: '1rem 1.5rem',
+            paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+            borderTop: `1px solid ${G.border}`,
+            flexShrink: 0,
+            background: G.card,
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
               <span style={{ color: G.muted, fontSize: '0.85rem' }}>Total do pedido</span>
               <span style={{ color: G.gold, fontWeight: 700, fontSize: '1.1rem' }}>{fmt(total)}</span>
             </div>

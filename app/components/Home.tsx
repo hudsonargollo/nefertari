@@ -169,7 +169,7 @@ export default function Home() {
       <section style={{
         height: '100dvh', display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-        padding: '5rem 1.5rem 3rem', position: 'relative',
+        padding: '1.5rem 1.5rem 2rem', position: 'relative',
         background: `radial-gradient(ellipse 70% 50% at 50% 10%, rgba(200,148,26,0.12) 0%, transparent 65%),
                      radial-gradient(ellipse 50% 35% at 50% 95%, rgba(107,140,62,0.06) 0%, transparent 55%),
                      ${G.dark}`,
