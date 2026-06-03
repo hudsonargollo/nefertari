@@ -83,14 +83,15 @@ export default function OrderStatus() {
           <ArrowLeft size={16} /> Cardápio
         </Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {/* light mode logo — pyramid on white */}
-          {!dark && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src="/nefertari-logo-v2.png" alt="Nefertari"
-                 style={{ height: '32px', objectFit: 'contain' }} />
-          )}
-          <span style={{ fontFamily: serif, fontSize: '0.95rem', fontWeight: 700, color: T.text }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={dark ? '/nefertari-logo-golden.png' : '/nefertari-logo-v2.png'}
+            alt="Nefertari"
+            style={{ height: '28px', objectFit: 'contain' }}
+          />
+          <span style={{ fontFamily: serif, fontSize: '0.72rem', fontWeight: 600,
+                         color: T.muted, letterSpacing: '0.05em' }}>
             Acompanhar pedido
           </span>
         </div>
@@ -105,15 +106,6 @@ export default function OrderStatus() {
       </header>
 
       <div style={{ maxWidth: '480px', margin: '0 auto', padding: '2rem 1.25rem' }}>
-
-        {/* Light mode — pyramid logo hero */}
-        {!dark && !loading && !error && (
-          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/nefertari-logo-v2.png" alt="Nefertari"
-                 style={{ width: '110px', objectFit: 'contain', marginBottom: '0.25rem' }} />
-          </div>
-        )}
 
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
