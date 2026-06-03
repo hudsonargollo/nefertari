@@ -293,12 +293,12 @@ export default function Milestone02() {
       </section>
 
       {/* ── Acesso & PINs ── */}
-      <section style={{ padding: '2rem 1.5rem 0' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+      <section style={{ padding: '3rem 1.5rem' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
 
           {/* Admin PIN */}
           <div style={{ background: '#fff', borderRadius: '1rem', border: `1px solid ${G.border}`,
-                        padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                        padding: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>🔐</span>
             <div>
               <p style={{ fontWeight: 700, fontSize: '0.88rem', color: G.dark, marginBottom: '0.25rem' }}>
@@ -316,7 +316,7 @@ export default function Milestone02() {
 
           {/* Customer loyalty PIN */}
           <div style={{ background: '#fff', borderRadius: '1rem', border: `1px solid ${G.border}`,
-                        padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                        padding: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>⭐</span>
             <div>
               <p style={{ fontWeight: 700, fontSize: '0.88rem', color: G.dark, marginBottom: '0.25rem' }}>
