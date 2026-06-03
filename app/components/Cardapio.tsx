@@ -64,17 +64,16 @@ function ItemDetailModal({ item, qty, dark, T, onAdd, onRemove, onClose }: {
   return (
     <>
       <div onClick={onClose} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:95, backdropFilter:'blur(8px)' }} />
-      <div style={{
-        position:'fixed', bottom:0, left:0, right:0, zIndex:96,
+      <div className="detail-modal" style={{
+        position:'fixed', zIndex:96,
         background: T.card,
-        borderRadius:'1.5rem 1.5rem 0 0',
-        maxHeight:'90dvh', overflowY:'auto',
+        overflowY:'auto',
         boxShadow:'0 -8px 48px rgba(0,0,0,0.4)',
       }}>
         {/* Photo gallery */}
         {allPhotos.length > 0 && (
-          <div style={{ position:'relative', height:'240px', overflow:'hidden',
-                        borderRadius:'1.5rem 1.5rem 0 0', background: dark ? '#0a0806' : T.bg2 }}>
+          <div style={{ position:'relative', overflow:'hidden',
+                        background: dark ? '#0a0806' : T.bg2 }} className="detail-modal-img">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={allPhotos[imgIdx]} alt={item.name}
                  style={{ width:'100%', height:'100%', objectFit:'cover' }} />
@@ -847,7 +846,38 @@ export default function Cardapio() {
         />
       )}
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Detail modal — bottom sheet on mobile, centered dialog on desktop ── */
+        .detail-modal {
+          bottom: 0; left: 0; right: 0;
+          border-radius: 1.5rem 1.5rem 0 0;
+          max-height: 92dvh;
+        }
+        .detail-modal-img {
+          height: 260px;
+          border-radius: 1.5rem 1.5rem 0 0;
+        }
+
+        @media (min-width: 720px) {
+          .detail-modal {
+            bottom: auto;
+            left: 50%;
+            top: 50%;
+            right: auto;
+            transform: translate(-50%, -50%);
+            width: 640px;
+            max-width: calc(100vw - 3rem);
+            border-radius: 1.5rem;
+            max-height: 88dvh;
+          }
+          .detail-modal-img {
+            height: 320px;
+            border-radius: 1.5rem 1.5rem 0 0;
+          }
+        }
+      `}</style>
     </div>
   );
 }

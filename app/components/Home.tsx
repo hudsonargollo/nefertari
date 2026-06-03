@@ -111,7 +111,6 @@ function Nav() {
                 onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
             Ver cardápio
           </Link>
-          <ThemeToggle dark={dark} onToggle={toggle} position="static" />
         </div>
 
         {/* mobile toggle — absolutely positioned so it doesn't break centering */}
