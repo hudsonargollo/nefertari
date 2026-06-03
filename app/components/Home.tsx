@@ -605,9 +605,28 @@ export default function Home() {
         <p style={{ fontFamily: serif, color: `${G.parch}30`, fontSize: '0.85rem', marginBottom: '0.4rem' }}>
           Nefertari Cozinha Viva
         </p>
-        <p style={{ color: `${G.muted}60`, fontSize: '0.7rem' }}>
+        <p style={{ color: `${G.muted}60`, fontSize: '0.7rem', marginBottom: '1.25rem' }}>
           Jequié, Bahia · {new Date().getFullYear()}
         </p>
+        <Link href="/painel"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                padding: '0.4rem 0.9rem', borderRadius: '99px',
+                border: '1px solid rgba(255,255,255,0.07)',
+                color: 'rgba(255,255,255,0.2)', fontSize: '0.65rem',
+                textDecoration: 'none', letterSpacing: '0.12em', textTransform: 'uppercase',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(200,148,26,0.4)';
+                (e.currentTarget as HTMLAnchorElement).style.color = G.gold;
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.07)';
+                (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.2)';
+              }}>
+          ◈ Admin
+        </Link>
       </footer>
     </div>
   );
