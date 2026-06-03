@@ -31,6 +31,7 @@ interface MenuItem {
   id: string; category: string;
   name: string; description: string; price: number; available: boolean; tags: string[];
   imageUrl?: string;
+  images?:   string[];
 }
 interface MenuCategory { id: string; label: string; sub: string; roman: string; }
 interface CartItem { id: string; name: string; price: number; qty: number; }
@@ -560,21 +561,35 @@ export default function Cardapio() {
                   gap: '1.25rem',
                   opacity: item.available ? 1 : 0.4,
                 }}>
-                  {/* product image */}
-                  <div style={{ width:'72px', height:'72px', borderRadius:'0.75rem', flexShrink:0,
-                                overflow:'hidden', border:`1px solid ${G.border}`,
-                                background:'rgba(255,255,255,0.06)',
-                                display:'flex', alignItems:'center', justifyContent:'center' }}>
-                    {item.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={item.imageUrl} alt={item.name}
-                           style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                    ) : (
-                      <span style={{ fontFamily:serif, fontSize:'1.4rem', color:`${G.gold}40` }}>
-                        {item.name[0]}
-                      </span>
-                    )}
-                  </div>
+                  {/* product image — single or dual (e.g. batata frita) */}
+                  {item.images && item.images.length > 1 ? (
+                    <div style={{ display:'flex', gap:'3px', flexShrink:0 }}>
+                      {item.images.slice(0,2).map((src, idx) => (
+                        <div key={idx} style={{ width:'52px', height:'72px', borderRadius:'0.6rem',
+                                                overflow:'hidden', border:`1px solid ${dark ? 'rgba(200,148,26,0.18)' : T.border}`,
+                                                background: dark ? 'rgba(255,255,255,0.06)' : T.bg2 }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={src} alt={`${item.name} ${idx+1}`}
+                               style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ width:'72px', height:'72px', borderRadius:'0.75rem', flexShrink:0,
+                                  overflow:'hidden', border:`1px solid ${dark ? 'rgba(200,148,26,0.18)' : T.border}`,
+                                  background: dark ? 'rgba(255,255,255,0.06)' : T.bg2,
+                                  display:'flex', alignItems:'center', justifyContent:'center' }}>
+                      {item.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.imageUrl} alt={item.name}
+                             style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                      ) : (
+                        <span style={{ fontFamily:serif, fontSize:'1.4rem', color:`${G.gold}40` }}>
+                          {item.name[0]}
+                        </span>
+                      )}
+                    </div>
+                  )}
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem',
