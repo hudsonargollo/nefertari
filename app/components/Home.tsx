@@ -335,20 +335,13 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem' }}>
               <div style={{
                 width: '220px', height: '220px', borderRadius: '50%', flexShrink: 0,
-                background: `linear-gradient(135deg, ${G.dark} 0%, #2A1A08 100%)`,
-                border: `3px solid rgba(200,148,26,0.25)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                position: 'relative', overflow: 'hidden',
+                border: `3px solid rgba(200,148,26,0.3)`,
+                overflow: 'hidden', position: 'relative',
+                boxShadow: '0 8px 40px rgba(200,148,26,0.15)',
               }}>
-                {/* decorative ring */}
-                <div style={{
-                  position: 'absolute', inset: '8px', borderRadius: '50%',
-                  border: '1px solid rgba(200,148,26,0.15)',
-                }} />
-                <div style={{ textAlign: 'center' }}>
-                  <span style={{ fontFamily: serif, fontSize: '4rem', color: `${G.gold}40`, display: 'block', lineHeight: 1 }}>J</span>
-                  <span style={{ color: `${G.gold}30`, fontSize: '0.6rem', letterSpacing: '0.3em', textTransform: 'uppercase' }}>foto em breve</span>
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/jessica.jpg" alt="Jéssica Souza — Fundadora da Nefertari"
+                     style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
               </div>
 
               <div style={{ textAlign: 'center' }}>
