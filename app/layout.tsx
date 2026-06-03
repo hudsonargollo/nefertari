@@ -20,6 +20,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Nefertari Cozinha Viva — Jequié, BA',
   description: 'Lanches artesanais feitos com ingredientes que você reconhece. Hamburguers, wraps e acompanhamentos — sem ultraprocessados, sem taxas de marketplace.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico' },
+    ],
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Dark background -->
+  <rect width="64" height="64" rx="14" fill="#14100C"/>
+  <!-- Pyramid body -->
+  <polygon points="32,10 56,50 8,50" fill="#C8941A"/>
+  <!-- Pyramid inner highlight (lighter tone) -->
+  <polygon points="32,16 50,46 32,46" fill="#E6B84A" opacity="0.25"/>
+  <!-- Base line -->
+  <line x1="8" y1="50" x2="56" y2="50" stroke="#E6B84A" stroke-width="2" stroke-linecap="round"/>
+  <!-- Sun rays (small lines above pyramid tip) -->
+  <line x1="32" y1="4" x2="32" y2="8" stroke="#E6B84A" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+  <line x1="38" y1="6" x2="36" y2="9" stroke="#E6B84A" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="26" y1="6" x2="28" y2="9" stroke="#E6B84A" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+</svg>

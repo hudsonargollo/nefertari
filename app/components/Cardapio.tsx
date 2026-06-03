@@ -441,16 +441,55 @@ export default function Cardapio() {
     <div style={{ background: G.dark, minHeight: '100dvh', fontFamily: sans, color: G.text }}>
 
       {/* ── Header ── */}
-      <header style={{ position: 'sticky', top: 0, zIndex: 40, background: 'rgba(14,12,8,0.95)',
-                       backdropFilter: 'blur(12px)', borderBottom: `1px solid ${G.border}` }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 1.25rem',
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '56px' }}>
-          <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
-            <ArrowLeft size={16} color={G.muted} />
-            <span style={{ fontFamily: serif, fontSize: '1rem', fontWeight: 700, color: G.text }}>Cardápio</span>
+      <header style={{ position: 'sticky', top: 0, zIndex: 40, background: 'rgba(14,12,8,0.96)',
+                       backdropFilter: 'blur(16px)', borderBottom: `1px solid ${G.border}` }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 1rem',
+                      display: 'grid', gridTemplateColumns: '48px 1fr 48px',
+                      alignItems: 'center', height: '56px' }}>
+          {/* back */}
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  width: '36px', height: '36px', borderRadius: '50%',
+                                  border: `1px solid ${G.border}`, textDecoration: 'none',
+                                  transition: 'border-color 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = G.gold)}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = G.border)}>
+            <ArrowLeft size={15} color={G.muted} />
           </Link>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/nefertari-logo-v2.png" alt="Nefertari" style={{ height: '34px', objectFit: 'contain' }} />
+
+          {/* brand — center */}
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontFamily: serif, fontSize: '1rem', fontWeight: 700,
+                        color: G.text, letterSpacing: '0.02em', lineHeight: 1.1 }}>
+              Nefertari
+            </p>
+            <p style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.35em',
+                        textTransform: 'uppercase', lineHeight: 1 }}>
+              Cozinha Viva
+            </p>
+          </div>
+
+          {/* cart shortcut */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            {itemCount > 0 ? (
+              <button onClick={() => setCartOpen(true)} style={{
+                width: '36px', height: '36px', borderRadius: '50%',
+                background: G.gold, border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                position: 'relative',
+              }}>
+                <ShoppingBag size={15} color={G.dark} />
+                <span style={{ position: 'absolute', top: '-4px', right: '-4px',
+                               background: G.dark, color: G.gold, borderRadius: '50%',
+                               width: '16px', height: '16px', fontSize: '0.6rem',
+                               fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                               border: `1px solid ${G.gold}` }}>
+                  {itemCount}
+                </span>
+              </button>
+            ) : (
+              <div style={{ width: '36px' }} /> /* spacer */
+            )}
+          </div>
         </div>
       </header>
 
