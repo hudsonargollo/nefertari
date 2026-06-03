@@ -289,31 +289,31 @@ function CheckoutModal({ cart, total, onClose, onSuccess }: {
               </div>
 
               {/* street + number */}
-              <div style={{ display:'grid', gridTemplateColumns:'1fr auto', gap:'0.5rem' }}>
-                <div>
+              <div style={{ display:'flex', gap:'0.5rem', alignItems:'flex-end' }}>
+                <div style={{ flex:1, minWidth:0 }}>
                   <label style={lbl}>Rua</label>
                   <input value={form.street} onChange={e => set('street',e.target.value)}
                          placeholder="Logradouro" style={inp} />
                 </div>
-                <div style={{ width:'90px' }}>
-                  <label style={lbl}>Número</label>
+                <div style={{ width:'80px', flexShrink:0 }}>
+                  <label style={lbl}>Nº</label>
                   <input value={form.number} onChange={e => set('number',e.target.value)}
                          placeholder="Nº" inputMode="numeric" style={inp} />
                 </div>
               </div>
 
-              {/* complement + neighborhood */}
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.5rem' }}>
-                <div>
-                  <label style={lbl}>Complemento <span style={{ fontWeight:400 }}>(opcional)</span></label>
-                  <input value={form.complement} onChange={e => set('complement',e.target.value)}
-                         placeholder="Apto, bloco..." style={inp} />
-                </div>
-                <div>
-                  <label style={lbl}>Bairro</label>
-                  <input value={form.neighborhood} onChange={e => set('neighborhood',e.target.value)}
-                         placeholder="Bairro" style={inp} />
-                </div>
+              {/* neighborhood — full width */}
+              <div>
+                <label style={lbl}>Bairro</label>
+                <input value={form.neighborhood} onChange={e => set('neighborhood',e.target.value)}
+                       placeholder="Bairro" style={inp} />
+              </div>
+
+              {/* complement — full width, optional */}
+              <div>
+                <label style={lbl}>Complemento <span style={{ fontWeight:400, textTransform:'none', letterSpacing:0 }}>(opcional)</span></label>
+                <input value={form.complement} onChange={e => set('complement',e.target.value)}
+                       placeholder="Apto, bloco, referência..." style={inp} />
               </div>
 
               {/* city — auto-filled, read-only */}
