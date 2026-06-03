@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ArrowRight, MapPin, Clock } from 'lucide-react';
+import { useTheme } from '../lib/useTheme';
+import ThemeToggle from './ThemeToggle';
 
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const G = {
@@ -72,6 +74,7 @@ const nots = [
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen]         = useState(false);
+  const { dark, toggle }        = useTheme();
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -108,6 +111,7 @@ function Nav() {
                 onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
             Ver cardápio
           </Link>
+          <ThemeToggle dark={dark} onToggle={toggle} position="static" />
         </div>
 
         {/* mobile toggle — absolutely positioned so it doesn't break centering */}
@@ -159,8 +163,18 @@ function GoldLine() {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function Home() {
+  const { dark, T } = useTheme();
+
+  // In light mode, flip hero to parchment and dark sections to light
+  const heroBg    = dark
+    ? `radial-gradient(ellipse 70% 50% at 50% 10%, rgba(200,148,26,0.12) 0%, transparent 65%), ${G.dark}`
+    : `radial-gradient(ellipse 70% 50% at 50% 10%, rgba(200,148,26,0.08) 0%, transparent 65%), ${G.parch}`;
+  const heroText  = dark ? G.parch : G.dark;
+  const darkSec   = dark ? G.dark2 : G.sand;      // sections that were dark now become sand in light
+  const lightSec  = dark ? G.parch : '#FFFFFF';    // sections that were parch become white in light
+
   return (
-    <div id="topo" style={{ fontFamily: sans, backgroundColor: G.dark, color: G.parch, overflowX: 'hidden' }}>
+    <div id="topo" style={{ fontFamily: sans, backgroundColor: T.bg, color: T.text, overflowX: 'hidden', transition: 'background 0.3s, color 0.3s' }}>
       <Nav />
 
       {/* ═══════════════════════════════════════════════════════════════════
@@ -170,9 +184,7 @@ export default function Home() {
         height: '100dvh', display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', textAlign: 'center',
         padding: '1.5rem 1.5rem 2rem', position: 'relative',
-        background: `radial-gradient(ellipse 70% 50% at 50% 10%, rgba(200,148,26,0.12) 0%, transparent 65%),
-                     radial-gradient(ellipse 50% 35% at 50% 95%, rgba(107,140,62,0.06) 0%, transparent 55%),
-                     ${G.dark}`,
+        background: heroBg, transition: 'background 0.3s',
       }}>
         {/* logo */}
         <div style={{ marginBottom: '1.25rem' }}>
@@ -187,13 +199,13 @@ export default function Home() {
 
         {/* headline */}
         <h1 style={{ fontFamily: serif, fontSize: 'clamp(2rem, 5.5vw, 4rem)', fontWeight: 700,
-                     lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 1rem', maxWidth: '640px' }}>
+                     lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 1rem', maxWidth: '640px', color: heroText }}>
           Alimentar o corpo<br />
           <span style={{ color: G.gold }}>como um ato sagrado.</span>
         </h1>
 
         {/* sub */}
-        <p style={{ color: G.muted, fontSize: 'clamp(0.875rem, 1.8vw, 1rem)', lineHeight: 1.65,
+        <p style={{ color: T.muted, fontSize: 'clamp(0.875rem, 1.8vw, 1rem)', lineHeight: 1.65,
                     maxWidth: '400px', margin: '0 auto 1.75rem' }}>
           Ingredientes reais. Receitas com intenção.<br />
           Feito à mão — para quem não abre mão de comer bem.
@@ -229,7 +241,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════════
           CONCEITO — O QUE É COZINHA VIVA?
       ═══════════════════════════════════════════════════════════════════ */}
-      <section id="conceito" style={{ background: G.parch, color: G.dark, padding: '6rem 1.5rem' }}>
+      <section id="conceito" style={{ background: lightSec, color: T.text, padding: '6rem 1.5rem', transition: 'background 0.3s' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <SectionTag label="O Conceito" />
@@ -284,7 +296,7 @@ export default function Home() {
       ═══════════════════════════════════════════════════════════════════ */}
       <section style={{
         padding: '6rem 1.5rem',
-        background: `linear-gradient(160deg, ${G.dark2} 0%, #1A1008 50%, ${G.dark2} 100%)`,
+        background: dark ? `linear-gradient(160deg, ${G.dark2} 0%, #1A1008 50%, ${G.dark2} 100%)` : G.sand,
         position: 'relative', overflow: 'hidden',
       }}>
         {/* decorative glyph */}
@@ -326,7 +338,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════════
           NOSSA CHEF
       ═══════════════════════════════════════════════════════════════════ */}
-      <section id="chef" style={{ background: G.parch, padding: '6rem 1.5rem' }}>
+      <section id="chef" style={{ background: lightSec, padding: '6rem 1.5rem', transition: 'background 0.3s' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
                         gap: '4rem', alignItems: 'center' }}>
@@ -401,7 +413,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════════
           CARDÁPIO PREVIEW
       ═══════════════════════════════════════════════════════════════════ */}
-      <section id="cardapio" style={{ background: G.sand, padding: '6rem 1.5rem' }}>
+      <section id="cardapio" style={{ background: dark ? G.sand : T.bg2, padding: '6rem 1.5rem', transition: 'background 0.3s' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <SectionTag label="Cardápio" />
@@ -458,7 +470,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════════
           NOSSO JEITO
       ═══════════════════════════════════════════════════════════════════ */}
-      <section id="jeito" style={{ background: G.parch, padding: '6rem 1.5rem' }}>
+      <section id="jeito" style={{ background: lightSec, padding: '6rem 1.5rem', transition: 'background 0.3s' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <SectionTag label="Nosso Jeito" />
@@ -520,7 +532,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════════
           ONDE & QUANDO
       ═══════════════════════════════════════════════════════════════════ */}
-      <section style={{ background: G.dark2, padding: '5rem 1.5rem' }}>
+      <section style={{ background: dark ? G.dark2 : G.sand, padding: '5rem 1.5rem', transition: 'background 0.3s' }}>
         <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
           <SectionTag label="Onde & Quando" light />
           <h2 style={{ fontFamily: serif, fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', fontWeight: 700,
@@ -573,7 +585,9 @@ export default function Home() {
       ═══════════════════════════════════════════════════════════════════ */}
       <section style={{
         padding: '7rem 1.5rem',
-        background: `radial-gradient(ellipse 70% 50% at 50% 50%, rgba(200,148,26,0.12) 0%, transparent 70%), ${G.dark}`,
+        background: dark
+          ? `radial-gradient(ellipse 70% 50% at 50% 50%, rgba(200,148,26,0.12) 0%, transparent 70%), ${G.dark}`
+          : `radial-gradient(ellipse 70% 50% at 50% 50%, rgba(200,148,26,0.08) 0%, transparent 70%), ${G.parch}`,
         textAlign: 'center',
       }}>
         <div style={{ maxWidth: '560px', margin: '0 auto' }}>
@@ -600,7 +614,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════════
           FOOTER
       ═══════════════════════════════════════════════════════════════════ */}
-      <footer style={{ background: '#0C0904', borderTop: `1px solid ${G.border}`,
+      <footer style={{ background: dark ? '#0C0904' : G.sand, borderTop: `1px solid ${dark ? G.border : '#E8D9BA'}`,
                        padding: '2rem 1.5rem', textAlign: 'center' }}>
         <p style={{ fontFamily: serif, color: `${G.parch}30`, fontSize: '0.85rem', marginBottom: '0.4rem' }}>
           Nefertari Cozinha Viva

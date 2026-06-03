@@ -3,8 +3,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Minus, ShoppingBag, X, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import { useTheme } from '../lib/useTheme';
+import ThemeToggle from './ThemeToggle';
 
-// ─── Tokens ───────────────────────────────────────────────────────────────────
+// ─── Static tokens (gold/green/terra never change between themes) ─────────────
 const G = {
   gold: '#C8941A', goldSoft: '#E6B84A', goldDim: 'rgba(200,148,26,0.15)',
   green: '#6B8C3E', terra: '#8B4030',
@@ -393,6 +395,7 @@ function OrderSuccess({ orderId, onNewOrder }: { orderId: string; onNewOrder: ()
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function Cardapio() {
+  const { dark, T, toggle } = useTheme();
   const [menu,         setMenu]         = useState<MenuItem[]>([]);
   const [cats,         setCats]         = useState<MenuCategory[]>(FALLBACK_CATS);
   const [loading,      setLoading]      = useState(true);
@@ -445,63 +448,72 @@ export default function Cardapio() {
   const catItems = menu.filter(i => i.category === activeCat);
 
   return (
-    <div style={{ background: G.dark, minHeight: '100dvh', fontFamily: sans, color: G.text }}>
+    <div style={{ background: T.bg, minHeight: '100dvh', fontFamily: sans, color: T.text, transition: 'background 0.3s, color 0.3s' }}>
 
       {/* ── Header ── */}
-      <header style={{ position: 'sticky', top: 0, zIndex: 40, background: 'rgba(14,12,8,0.96)',
-                       backdropFilter: 'blur(16px)', borderBottom: `1px solid ${G.border}` }}>
+      <header style={{ position: 'sticky', top: 0, zIndex: 40,
+                       background: dark ? 'rgba(14,12,8,0.96)' : 'rgba(250,245,232,0.96)',
+                       backdropFilter: 'blur(16px)', borderBottom: `1px solid ${T.border}` }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 1rem',
                       display: 'grid', gridTemplateColumns: '48px 1fr 48px',
                       alignItems: 'center', height: '56px' }}>
           {/* back */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
                                   width: '36px', height: '36px', borderRadius: '50%',
-                                  border: `1px solid ${G.border}`, textDecoration: 'none',
+                                  border: `1px solid ${T.border}`, textDecoration: 'none',
                                   transition: 'border-color 0.15s' }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = G.gold)}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = G.border)}>
-            <ArrowLeft size={15} color={G.muted} />
+                onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}>
+            <ArrowLeft size={15} color={T.muted} />
           </Link>
 
-          {/* brand — center */}
+          {/* brand — center — in light mode show colored pyramid logo */}
           <div style={{ textAlign: 'center' }}>
-            <p style={{ fontFamily: serif, fontSize: '1rem', fontWeight: 700,
-                        color: G.text, letterSpacing: '0.02em', lineHeight: 1.1 }}>
-              Nefertari
-            </p>
-            <p style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.35em',
-                        textTransform: 'uppercase', lineHeight: 1 }}>
-              Cozinha Viva
-            </p>
+            {!dark ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src="/nefertari-logo-v2.png" alt="Nefertari" style={{ height: '38px', objectFit: 'contain' }} />
+            ) : (
+              <>
+                <p style={{ fontFamily: serif, fontSize: '1rem', fontWeight: 700,
+                            color: T.text, letterSpacing: '0.02em', lineHeight: 1.1 }}>
+                  Nefertari
+                </p>
+                <p style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.35em',
+                            textTransform: 'uppercase', lineHeight: 1 }}>
+                  Cozinha Viva
+                </p>
+              </>
+            )}
           </div>
 
-          {/* cart shortcut */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            {itemCount > 0 ? (
+          {/* right: theme toggle + cart */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.4rem' }}>
+            <ThemeToggle dark={dark} onToggle={toggle} position="static" />
+            {itemCount > 0 && (
               <button onClick={() => setCartOpen(true)} style={{
                 width: '36px', height: '36px', borderRadius: '50%',
                 background: G.gold, border: 'none', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 position: 'relative',
               }}>
-                <ShoppingBag size={15} color={G.dark} />
+                <ShoppingBag size={15} color="#14100C" />
                 <span style={{ position: 'absolute', top: '-4px', right: '-4px',
-                               background: G.dark, color: G.gold, borderRadius: '50%',
+                               background: T.bg, color: G.gold, borderRadius: '50%',
                                width: '16px', height: '16px', fontSize: '0.6rem',
                                fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
                                border: `1px solid ${G.gold}` }}>
                   {itemCount}
                 </span>
               </button>
-            ) : (
-              <div style={{ width: '36px' }} /> /* spacer */
             )}
+            {itemCount === 0 && <div style={{ width: '36px' }} />}
           </div>
         </div>
       </header>
 
       {/* ── Category nav ── */}
-      <div style={{ borderBottom: `1px solid ${G.border}`, background: 'rgba(14,12,8,0.8)',
+      <div style={{ borderBottom: `1px solid ${T.border}`,
+                    background: dark ? 'rgba(14,12,8,0.85)' : 'rgba(250,245,232,0.9)',
                     position: 'sticky', top: '56px', zIndex: 39, backdropFilter: 'blur(8px)' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', overflowX: 'auto',
                       display: 'flex', padding: '0 1.25rem' }}>
@@ -509,7 +521,7 @@ export default function Cardapio() {
             <button key={cat.id} onClick={() => setActiveCat(cat.id)} style={{
               flexShrink: 0, background: 'none', border: 'none', cursor: 'pointer',
               padding: '0.85rem 1rem', fontSize: '0.8rem', fontWeight: 600, fontFamily: sans,
-              color: activeCat === cat.id ? G.gold : G.muted,
+              color: activeCat === cat.id ? G.gold : T.muted,
               borderBottom: `2px solid ${activeCat===cat.id ? G.gold : 'transparent'}`,
               transition: 'all 0.15s', whiteSpace: 'nowrap',
             }}>
@@ -551,7 +563,7 @@ export default function Cardapio() {
                 <div key={item.id} style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '1.5rem 0',
-                  borderBottom: idx < catItems.length - 1 ? `1px solid rgba(200,148,26,0.1)` : 'none',
+                  borderBottom: idx < catItems.length - 1 ? `1px solid ${dark ? 'rgba(200,148,26,0.1)' : T.border}` : 'none',
                   gap: '1.25rem',
                   opacity: item.available ? 1 : 0.4,
                 }}>
@@ -575,7 +587,7 @@ export default function Cardapio() {
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem',
                                   flexWrap: 'wrap', marginBottom: '0.35rem' }}>
                       <h3 style={{ fontFamily: serif, fontSize: '1.05rem', fontWeight: 700,
-                                   color: G.text, margin: 0 }}>{item.name}</h3>
+                                   color: T.text, margin: 0 }}>{item.name}</h3>
                       {item.tags.map(t => (
                         <span key={t} style={{ fontSize: '0.58rem', fontWeight: 700, padding: '0.12rem 0.5rem',
                                                borderRadius: '99px', border: `1px solid ${G.green}50`,
@@ -584,7 +596,7 @@ export default function Cardapio() {
                         </span>
                       ))}
                     </div>
-                    <p style={{ color: G.muted, fontSize: '0.82rem', lineHeight: 1.6, maxWidth: '380px' }}>
+                    <p style={{ color: T.muted, fontSize: '0.82rem', lineHeight: 1.6, maxWidth: '380px' }}>
                       {item.description}
                     </p>
                     <p style={{ color: G.gold, fontWeight: 700, fontSize: '0.95rem', marginTop: '0.5rem' }}>
