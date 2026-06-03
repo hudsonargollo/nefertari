@@ -26,30 +26,30 @@ const sans  = 'Inter, system-ui, sans-serif';
 const menuCategories = [
   {
     glyph: '◈',
-    name: 'Hambúrgueres Artesanais',
-    count: '4 opções',
-    desc: 'Cada pão é pensado, cada camada tem intenção. Hambúrgueres feitos à mão com ingredientes que você reconhece.',
+    name: 'Hambúrgueres',
+    highlight: 'Feito à mão',
+    desc: 'Cada camada pensada, cada ingrediente com razão de estar ali. Uma experiência gastronômica no formato de lanche.',
     color: G.gold,
   },
   {
     glyph: '❧',
     name: 'Wraps',
-    count: '2 opções',
-    desc: 'Leveza com substância. Mix de folhas frescas, proteínas de verdade e molhos artesanais enrolados com cuidado.',
+    highlight: 'Leveza intencional',
+    desc: 'Folhas frescas, proteínas de verdade, molhos artesanais. Leve no peso — intenso no sabor.',
     color: G.green,
   },
   {
     glyph: '△',
     name: 'Acompanhamentos',
-    count: 'Batata frita',
-    desc: 'Batatas preparadas com simplicidade e intenção. O acompanhamento perfeito para uma refeição completa.',
+    highlight: 'Para completar',
+    desc: 'Batata frita com sal grosso e ervas. Simples, crocante, sem enrolação — do jeito que tem que ser.',
     color: G.terra,
   },
   {
     glyph: '◉',
     name: 'Bebidas',
-    count: 'Sucos · Refrigerantes · Água',
-    desc: 'Opções para completar sua experiência — frescas, simples, sem mistério.',
+    highlight: 'Frescas e reais',
+    desc: 'Suco espremido na hora, refrigerante gelado e água. Nada artificial, tudo com intenção.',
     color: G.goldSoft,
   },
 ];
@@ -340,10 +340,10 @@ export default function Home() {
             <SectionTag label="Cardápio" />
             <h2 style={{ fontFamily: serif, fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700,
                          margin: '1rem 0 0.75rem', color: G.dark, lineHeight: 1.2 }}>
-              Uma refeição para cada momento.
+              Comer bem não deveria<br />ser difícil.
             </h2>
-            <p style={{ color: '#6B5040', fontSize: '0.95rem', maxWidth: '440px', margin: '0 auto' }}>
-              Feito para quem não abre mão de comer bem — mesmo à noite, mesmo com pressa.
+            <p style={{ color: '#6B5040', fontSize: '0.95rem', maxWidth: '420px', margin: '0 auto' }}>
+              Na Nefertari, você encontra lanches feitos de verdade — para quem sabe o que quer e não aceita menos.
             </p>
           </div>
 
@@ -369,7 +369,7 @@ export default function Home() {
                             color: G.dark, marginBottom: '0.3rem' }}>{cat.name}</p>
                 <p style={{ color: cat.color, fontSize: '0.7rem', fontWeight: 600,
                             letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-                  {cat.count}
+                  {cat.highlight}
                 </p>
                 <p style={{ color: '#6B5040', fontSize: '0.85rem', lineHeight: 1.7 }}>{cat.desc}</p>
               </div>

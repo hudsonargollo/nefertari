@@ -26,9 +26,11 @@ const phoneFormat = (v: string) => {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface MenuItem {
-  id: string; category: 'burger' | 'wrap' | 'side' | 'drink';
+  id: string; category: string;
   name: string; description: string; price: number; available: boolean; tags: string[];
+  imageUrl?: string;
 }
+interface MenuCategory { id: string; label: string; sub: string; roman: string; }
 interface CartItem { id: string; name: string; price: number; qty: number; }
 interface CheckoutForm {
   name: string; phone: string; type: 'pickup' | 'delivery';
@@ -41,13 +43,12 @@ const cepFormat = (v: string) => {
   return d.length > 5 ? `${d.slice(0,5)}-${d.slice(5)}` : d;
 };
 
-// ─── Category config ──────────────────────────────────────────────────────────
-const CATS = [
-  { id: 'burger', label: 'Pratos Principais', sub: 'Hambúrgueres artesanais', roman: 'I'   },
-  { id: 'wrap',   label: 'Wraps',             sub: 'Leves e intencionais',    roman: 'II'  },
-  { id: 'side',   label: 'Acompanhamentos',   sub: 'Para completar',          roman: 'III' },
-  { id: 'drink',  label: 'Bebidas',           sub: 'Frescas e simples',       roman: 'IV'  },
-] as const;
+const FALLBACK_CATS: MenuCategory[] = [
+  { id:'burger', label:'Pratos Principais', sub:'Hambúrgueres artesanais', roman:'I'   },
+  { id:'wrap',   label:'Wraps',             sub:'Leves e intencionais',    roman:'II'  },
+  { id:'side',   label:'Acompanhamentos',   sub:'Para completar',          roman:'III' },
+  { id:'drink',  label:'Bebidas',           sub:'Frescas e simples',       roman:'IV'  },
+];
 
 // ─── Cart panel ───────────────────────────────────────────────────────────────
 function CartPanel({ cart, onClose, onUpdateQty, onCheckout, total }: {
@@ -386,6 +387,7 @@ function OrderSuccess({ orderId, onNewOrder }: { orderId: string; onNewOrder: ()
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function Cardapio() {
   const [menu,         setMenu]         = useState<MenuItem[]>([]);
+  const [cats,         setCats]         = useState<MenuCategory[]>(FALLBACK_CATS);
   const [loading,      setLoading]      = useState(true);
   const [activeCat,    setActiveCat]    = useState<string>('burger');
   const [cart,         setCart]         = useState<CartItem[]>([]);
@@ -394,7 +396,14 @@ export default function Cardapio() {
   const [orderId,      setOrderId]      = useState('');
 
   useEffect(() => {
-    fetch('/api/menu').then(r => r.json()).then((d: MenuItem[]) => setMenu(d)).catch(()=>{}).finally(()=>setLoading(false));
+    fetch('/api/menu')
+      .then(r => r.json())
+      .then((d: { items: MenuItem[]; categories: MenuCategory[] }) => {
+        setMenu(d.items ?? []);
+        if (d.categories?.length) setCats(d.categories);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const addToCart = useCallback((item: MenuItem) => {
@@ -409,8 +418,9 @@ export default function Cardapio() {
     setCart(prev => prev.map(c => c.id===id ? {...c, qty:Math.max(0,c.qty+delta)} : c).filter(c=>c.qty>0));
   }, []);
 
-  const total     = cart.reduce((s,c) => s+c.price*c.qty, 0);
-  const itemCount = cart.reduce((s,c) => s+c.qty, 0);
+  const total       = cart.reduce((s,c) => s+c.price*c.qty, 0);
+  const itemCount   = cart.reduce((s,c) => s+c.qty, 0);
+  const activeCatCfg = cats.find(c => c.id === activeCat) ?? cats[0];
 
   function handleSuccess(id: string) { setOrderId(id); setCheckoutOpen(false); setCartOpen(false); setCart([]); }
 
@@ -426,7 +436,6 @@ export default function Cardapio() {
   );
 
   const catItems = menu.filter(i => i.category === activeCat);
-  const currentCat = CATS.find(c => c.id === activeCat)!;
 
   return (
     <div style={{ background: G.dark, minHeight: '100dvh', fontFamily: sans, color: G.text }}>
@@ -450,7 +459,7 @@ export default function Cardapio() {
                     position: 'sticky', top: '56px', zIndex: 39, backdropFilter: 'blur(8px)' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', overflowX: 'auto',
                       display: 'flex', padding: '0 1.25rem' }}>
-          {CATS.map(cat => (
+          {cats.map(cat => (
             <button key={cat.id} onClick={() => setActiveCat(cat.id)} style={{
               flexShrink: 0, background: 'none', border: 'none', cursor: 'pointer',
               padding: '0.85rem 1rem', fontSize: '0.8rem', fontWeight: 600, fontFamily: sans,
@@ -469,16 +478,16 @@ export default function Cardapio() {
       <main style={{ maxWidth: '800px', margin: '0 auto', padding: '0 1.25rem 6rem' }}>
 
         {/* Category header */}
-        {!loading && (
+        {!loading && activeCatCfg && (
           <div style={{ padding: '2.5rem 0 2rem', borderBottom: `1px solid ${G.border}`,
                         marginBottom: '0', textAlign: 'center' }}>
             <p style={{ color: G.muted, fontSize: '0.65rem', letterSpacing: '0.4em',
                         textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-              {currentCat.roman} · {currentCat.sub}
+              {activeCatCfg.roman} · {activeCatCfg.sub}
             </p>
             <h2 style={{ fontFamily: serif, fontSize: 'clamp(1.6rem, 4vw, 2.4rem)',
                          fontWeight: 700, color: G.text, margin: 0 }}>
-              {currentCat.label}
+              {activeCatCfg.label}
             </h2>
             <div style={{ width: '40px', height: '1px', background: G.gold, margin: '1rem auto 0' }} />
           </div>
@@ -494,16 +503,32 @@ export default function Cardapio() {
               const qty = cart.find(c => c.id===item.id)?.qty ?? 0;
               return (
                 <div key={item.id} style={{
-                  display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-                  padding: '1.75rem 0',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '1.5rem 0',
                   borderBottom: idx < catItems.length - 1 ? `1px solid rgba(200,148,26,0.1)` : 'none',
-                  gap: '1.5rem',
+                  gap: '1.25rem',
                   opacity: item.available ? 1 : 0.4,
                 }}>
-                  <div style={{ flex: 1 }}>
+                  {/* product image */}
+                  <div style={{ width:'72px', height:'72px', borderRadius:'0.75rem', flexShrink:0,
+                                overflow:'hidden', border:`1px solid ${G.border}`,
+                                background:'rgba(255,255,255,0.06)',
+                                display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    {item.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={item.imageUrl} alt={item.name}
+                           style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                    ) : (
+                      <span style={{ fontFamily:serif, fontSize:'1.4rem', color:`${G.gold}40` }}>
+                        {item.name[0]}
+                      </span>
+                    )}
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem',
-                                  flexWrap: 'wrap', marginBottom: '0.4rem' }}>
-                      <h3 style={{ fontFamily: serif, fontSize: '1.1rem', fontWeight: 700,
+                                  flexWrap: 'wrap', marginBottom: '0.35rem' }}>
+                      <h3 style={{ fontFamily: serif, fontSize: '1.05rem', fontWeight: 700,
                                    color: G.text, margin: 0 }}>{item.name}</h3>
                       {item.tags.map(t => (
                         <span key={t} style={{ fontSize: '0.58rem', fontWeight: 700, padding: '0.12rem 0.5rem',
@@ -513,10 +538,10 @@ export default function Cardapio() {
                         </span>
                       ))}
                     </div>
-                    <p style={{ color: G.muted, fontSize: '0.85rem', lineHeight: 1.65, maxWidth: '440px' }}>
+                    <p style={{ color: G.muted, fontSize: '0.82rem', lineHeight: 1.6, maxWidth: '380px' }}>
                       {item.description}
                     </p>
-                    <p style={{ color: G.gold, fontWeight: 700, fontSize: '1rem', marginTop: '0.6rem' }}>
+                    <p style={{ color: G.gold, fontWeight: 700, fontSize: '0.95rem', marginTop: '0.5rem' }}>
                       {fmt(item.price)}
                     </p>
                   </div>

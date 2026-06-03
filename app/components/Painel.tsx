@@ -426,6 +426,9 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
                                                   color: G.muted, padding: '6px' }}>
             <RefreshCw size={16} />
           </button>
+          <Link href="/painel/cardapio" style={{ color: G.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }} title="Gerenciar cardápio">
+            <span style={{ fontSize: '0.75rem', fontWeight: 700 }}>◈</span>
+          </Link>
           <Link href="/painel/clientes" style={{ color: G.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }}>
             <Users size={16} />
           </Link>
