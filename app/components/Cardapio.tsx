@@ -467,23 +467,16 @@ export default function Cardapio() {
             <ArrowLeft size={15} color={T.muted} />
           </Link>
 
-          {/* brand — center — in light mode show colored pyramid logo */}
+          {/* brand — center — text logo in both modes */}
           <div style={{ textAlign: 'center' }}>
-            {!dark ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src="/nefertari-logo-v2.png" alt="Nefertari" style={{ height: '38px', objectFit: 'contain' }} />
-            ) : (
-              <>
-                <p style={{ fontFamily: serif, fontSize: '1rem', fontWeight: 700,
-                            color: T.text, letterSpacing: '0.02em', lineHeight: 1.1 }}>
-                  Nefertari
-                </p>
-                <p style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.35em',
-                            textTransform: 'uppercase', lineHeight: 1 }}>
-                  Cozinha Viva
-                </p>
-              </>
-            )}
+            <p style={{ fontFamily: serif, fontSize: '1rem', fontWeight: 700,
+                        color: T.text, letterSpacing: '0.02em', lineHeight: 1.1 }}>
+              Nefertari
+            </p>
+            <p style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.35em',
+                        textTransform: 'uppercase', lineHeight: 1 }}>
+              Cozinha Viva
+            </p>
           </div>
 
           {/* right: theme toggle + cart */}
