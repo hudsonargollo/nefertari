@@ -31,8 +31,15 @@ interface MenuItem {
 }
 interface CartItem { id: string; name: string; price: number; qty: number; }
 interface CheckoutForm {
-  name: string; phone: string; type: 'pickup' | 'delivery'; address: string; notes: string;
+  name: string; phone: string; type: 'pickup' | 'delivery';
+  cep: string; street: string; number: string; complement: string; neighborhood: string; city: string;
+  notes: string;
 }
+
+const cepFormat = (v: string) => {
+  const d = v.replace(/\D/g, '').slice(0, 8);
+  return d.length > 5 ? `${d.slice(0,5)}-${d.slice(5)}` : d;
+};
 
 // ─── Category config ──────────────────────────────────────────────────────────
 const CATS = [
@@ -119,28 +126,63 @@ function CartPanel({ cart, onClose, onUpdateQty, onCheckout, total }: {
 function CheckoutModal({ cart, total, onClose, onSuccess }: {
   cart: CartItem[]; total: number; onClose: () => void; onSuccess: (id: string) => void;
 }) {
-  const [form, setForm] = useState<CheckoutForm>({ name:'', phone:'', type:'pickup', address:'', notes:'' });
-  const [busy, setBusy] = useState(false);
-  const [err,  setErr]  = useState('');
+  const EMPTY: CheckoutForm = { name:'', phone:'', type:'pickup', cep:'', street:'', number:'', complement:'', neighborhood:'', city:'', notes:'' };
+  const [form,      setForm]      = useState<CheckoutForm>(EMPTY);
+  const [cepBusy,   setCepBusy]   = useState(false);
+  const [cepErr,    setCepErr]    = useState('');
+  const [busy,      setBusy]      = useState(false);
+  const [err,       setErr]       = useState('');
   const set = (k: keyof CheckoutForm, v: string) => setForm(p => ({ ...p, [k]: v }));
+
+  // Auto-fetch address when CEP is complete
+  async function fetchCep(raw: string) {
+    const digits = raw.replace(/\D/g,'');
+    set('cep', cepFormat(raw));
+    setCepErr('');
+    if (digits.length < 8) return;
+    setCepBusy(true);
+    try {
+      const res  = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
+      const data = await res.json() as { erro?: boolean; logradouro?: string; bairro?: string; localidade?: string; uf?: string };
+      if (data.erro) { setCepErr('CEP não encontrado.'); return; }
+      setForm(p => ({
+        ...p,
+        cep:          cepFormat(digits),
+        street:       data.logradouro    ?? '',
+        neighborhood: data.bairro        ?? '',
+        city:         `${data.localidade ?? ''}, ${data.uf ?? ''}`,
+      }));
+    } catch {
+      setCepErr('Não foi possível buscar o CEP.');
+    } finally {
+      setCepBusy(false);
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name.trim() || !form.phone.trim()) { setErr('Preencha nome e WhatsApp.'); return; }
-    if (form.type === 'delivery' && !form.address.trim()) { setErr('Informe o endereço.'); return; }
+    if (form.type === 'delivery') {
+      if (!form.cep.trim() || !form.street.trim() || !form.number.trim()) {
+        setErr('Preencha CEP, rua e número.'); return;
+      }
+    }
     setBusy(true); setErr('');
     try {
+      const fullAddress = form.type === 'delivery'
+        ? `${form.street}, ${form.number}${form.complement ? ` ${form.complement}` : ''} — ${form.neighborhood}, ${form.city} · CEP ${form.cep}`
+        : '';
       const res  = await fetch('/api/orders', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ customer: { name: form.name, phone: form.phone },
-                               type: form.type, address: form.address, notes: form.notes, items: cart, total }),
+                               type: form.type, address: fullAddress, notes: form.notes, items: cart, total }),
       });
       const data = await res.json() as { ok: boolean; id: string };
       if (!data.ok) throw new Error();
       const summary = cart.map(i => `${i.qty}× ${i.name}`).join(', ');
       const wa = encodeURIComponent(
         `🌿 *Novo pedido Nefertari*\n\n*#${data.id}*\nCliente: ${form.name}\nWhatsApp: ${form.phone}\n` +
-        `Tipo: ${form.type === 'pickup' ? 'Retirada' : `Entrega — ${form.address}`}\n\n${summary}\n\n*Total: ${fmt(total)}*` +
+        `Tipo: ${form.type === 'pickup' ? 'Retirada' : `Entrega — ${fullAddress}`}\n\n${summary}\n\n*Total: ${fmt(total)}*` +
         (form.notes ? `\n\nObs: ${form.notes}` : '')
       );
       window.open(`https://wa.me/5573988083318?text=${wa}`, '_blank');
@@ -153,6 +195,10 @@ function CheckoutModal({ cart, total, onClose, onSuccess }: {
     width:'100%', padding:'0.75rem 1rem', borderRadius:'0.75rem', boxSizing:'border-box',
     border:`1px solid ${G.border}`, background:'rgba(255,255,255,0.05)',
     color: G.text, fontSize:'0.9rem', fontFamily: sans, outline:'none',
+  };
+  const lbl: React.CSSProperties = {
+    display:'block', color:G.muted, fontSize:'0.72rem', fontWeight:600,
+    letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'0.4rem',
   };
 
   return (
@@ -184,17 +230,19 @@ function CheckoutModal({ cart, total, onClose, onSuccess }: {
             </div>
           </div>
 
+          {/* name + phone */}
           <div>
-            <label style={{ display:'block', color:G.muted, fontSize:'0.72rem', fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'0.4rem' }}>Seu nome</label>
+            <label style={lbl}>Seu nome</label>
             <input value={form.name} onChange={e => set('name', e.target.value)} placeholder="Como podemos te chamar?" style={inp} />
           </div>
           <div>
-            <label style={{ display:'block', color:G.muted, fontSize:'0.72rem', fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'0.4rem' }}>WhatsApp</label>
+            <label style={lbl}>WhatsApp</label>
             <input value={form.phone} onChange={e => set('phone', phoneFormat(e.target.value))} placeholder="(73) 99999-9999" style={inp} inputMode="tel" />
           </div>
 
+          {/* type */}
           <div>
-            <label style={{ display:'block', color:G.muted, fontSize:'0.72rem', fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'0.4rem' }}>Como prefere?</label>
+            <label style={lbl}>Como prefere?</label>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.5rem' }}>
               {(['pickup','delivery'] as const).map(t => (
                 <button key={t} type="button" onClick={() => set('type',t)} style={{
@@ -210,15 +258,75 @@ function CheckoutModal({ cart, total, onClose, onSuccess }: {
             </div>
           </div>
 
-          {form.type==='delivery' && (
-            <div>
-              <label style={{ display:'block', color:G.muted, fontSize:'0.72rem', fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'0.4rem' }}>Endereço</label>
-              <input value={form.address} onChange={e => set('address',e.target.value)} placeholder="Rua, número, bairro" style={inp} />
+          {/* delivery address with ViaCEP */}
+          {form.type === 'delivery' && (
+            <div style={{ display:'flex', flexDirection:'column', gap:'0.75rem',
+                          padding:'1rem', borderRadius:'0.75rem', border:`1px solid ${G.border}`,
+                          background:'rgba(255,255,255,0.03)' }}>
+              <p style={{ color:G.gold, fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase' }}>
+                Endereço de entrega
+              </p>
+
+              {/* CEP */}
+              <div>
+                <label style={lbl}>CEP</label>
+                <div style={{ position:'relative' }}>
+                  <input
+                    value={form.cep}
+                    onChange={e => fetchCep(e.target.value)}
+                    placeholder="00000-000" inputMode="numeric" maxLength={9}
+                    style={{ ...inp, paddingRight: cepBusy ? '2.5rem' : '1rem' }}
+                  />
+                  {cepBusy && (
+                    <Loader2 size={14} color={G.gold} style={{
+                      position:'absolute', right:'0.85rem', top:'50%', transform:'translateY(-50%)',
+                      animation:'spin 1s linear infinite',
+                    }} />
+                  )}
+                </div>
+                {cepErr && <p style={{ color:'#f87171', fontSize:'0.75rem', marginTop:'0.3rem' }}>{cepErr}</p>}
+              </div>
+
+              {/* street + number */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr auto', gap:'0.5rem' }}>
+                <div>
+                  <label style={lbl}>Rua</label>
+                  <input value={form.street} onChange={e => set('street',e.target.value)}
+                         placeholder="Logradouro" style={inp} />
+                </div>
+                <div style={{ width:'90px' }}>
+                  <label style={lbl}>Número</label>
+                  <input value={form.number} onChange={e => set('number',e.target.value)}
+                         placeholder="Nº" inputMode="numeric" style={inp} />
+                </div>
+              </div>
+
+              {/* complement + neighborhood */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.5rem' }}>
+                <div>
+                  <label style={lbl}>Complemento <span style={{ fontWeight:400 }}>(opcional)</span></label>
+                  <input value={form.complement} onChange={e => set('complement',e.target.value)}
+                         placeholder="Apto, bloco..." style={inp} />
+                </div>
+                <div>
+                  <label style={lbl}>Bairro</label>
+                  <input value={form.neighborhood} onChange={e => set('neighborhood',e.target.value)}
+                         placeholder="Bairro" style={inp} />
+                </div>
+              </div>
+
+              {/* city — auto-filled, read-only */}
+              {form.city && (
+                <p style={{ color:G.muted, fontSize:'0.8rem', display:'flex', alignItems:'center', gap:'0.4rem' }}>
+                  <span style={{ color:G.green }}>✓</span> {form.city}
+                </p>
+              )}
             </div>
           )}
 
+          {/* notes */}
           <div>
-            <label style={{ display:'block', color:G.muted, fontSize:'0.72rem', fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'0.4rem' }}>
+            <label style={{ ...lbl }}>
               Observações <span style={{ fontWeight:400 }}>(opcional)</span>
             </label>
             <textarea value={form.notes} onChange={e => set('notes',e.target.value)}
@@ -227,9 +335,9 @@ function CheckoutModal({ cart, total, onClose, onSuccess }: {
 
           {err && <p style={{ color:'#f87171', fontSize:'0.82rem', background:'rgba(248,113,113,0.08)', padding:'0.6rem 0.9rem', borderRadius:'0.5rem' }}>{err}</p>}
 
-          <button type="submit" disabled={busy} style={{
-            padding:'0.95rem', background: busy ? G.muted : G.gold, color:G.dark, border:'none',
-            borderRadius:'99px', fontWeight:700, fontSize:'0.95rem', cursor: busy ? 'not-allowed':'pointer',
+          <button type="submit" disabled={busy || cepBusy} style={{
+            padding:'0.95rem', background: (busy||cepBusy) ? G.muted : G.gold, color:G.dark, border:'none',
+            borderRadius:'99px', fontWeight:700, fontSize:'0.95rem', cursor:(busy||cepBusy)?'not-allowed':'pointer',
             display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', fontFamily:sans,
           }}>
             {busy ? <><Loader2 size={15} style={{ animation:'spin 1s linear infinite' }} /> Enviando...</> : <>Confirmar pedido <ArrowRight size={15} /></>}
