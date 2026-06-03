@@ -244,7 +244,7 @@ export default function Milestone02() {
           </h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem' }}>
           {deliverables.map(d => (
             <div key={d.num} style={{
               background: '#fff', borderRadius: '1.25rem', border: `1px solid ${G.border}`,
