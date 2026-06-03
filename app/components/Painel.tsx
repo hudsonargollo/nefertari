@@ -547,7 +547,8 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
               {history.map(order => (
                 <OrderCard key={order.id} order={order}
                            onStatusChange={updateStatus}
-                           updating={updating === order.id} />
+                           updating={updating === order.id}
+                           cardBg={T.card} cardBorder={T.border} itemBg={T.bg} />
               ))}
             </div>
           )
