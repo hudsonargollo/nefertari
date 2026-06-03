@@ -94,7 +94,7 @@ function Nav() {
 
         {/* desktop links — centered */}
         <div className="hidden md:flex items-center gap-8">
-          {[['#conceito','Conceito'],['#cardapio','Cardápio'],['#jeito','Nosso jeito']].map(([href, label]) => (
+          {[['#conceito','Conceito'],['#chef','Nossa chef'],['#jeito','Nosso jeito']].map(([href, label]) => (
             <a key={href} href={href}
                style={{ color: G.muted, fontSize: '0.8rem', textDecoration: 'none', letterSpacing: '0.05em', transition: 'color 0.2s' }}
                onMouseEnter={e => (e.currentTarget.style.color = G.parch)}
@@ -122,7 +122,7 @@ function Nav() {
       {open && (
         <div style={{ background: 'rgba(20,16,12,0.98)', borderTop: `1px solid ${G.border}`, padding: '1.5rem' }}>
           <div className="flex flex-col gap-5">
-            {[['#conceito','Conceito'],['#cardapio','Cardápio'],['#jeito','Nosso jeito']].map(([href, label]) => (
+            {[['#conceito','Conceito'],['#chef','Nossa chef'],['#jeito','Nosso jeito']].map(([href, label]) => (
               <a key={href} href={href} onClick={() => setOpen(false)}
                  style={{ color: G.muted, fontSize: '1rem', textDecoration: 'none' }}>{label}</a>
             ))}
@@ -322,6 +322,88 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          NOSSA CHEF
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section id="chef" style={{ background: G.parch, padding: '6rem 1.5rem' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                        gap: '4rem', alignItems: 'center' }}>
+
+            {/* photo placeholder */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem' }}>
+              <div style={{
+                width: '220px', height: '220px', borderRadius: '50%', flexShrink: 0,
+                background: `linear-gradient(135deg, ${G.dark} 0%, #2A1A08 100%)`,
+                border: `3px solid rgba(200,148,26,0.25)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                position: 'relative', overflow: 'hidden',
+              }}>
+                {/* decorative ring */}
+                <div style={{
+                  position: 'absolute', inset: '8px', borderRadius: '50%',
+                  border: '1px solid rgba(200,148,26,0.15)',
+                }} />
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ fontFamily: serif, fontSize: '4rem', color: `${G.gold}40`, display: 'block', lineHeight: 1 }}>J</span>
+                  <span style={{ color: `${G.gold}30`, fontSize: '0.6rem', letterSpacing: '0.3em', textTransform: 'uppercase' }}>foto em breve</span>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontFamily: serif, fontSize: '1.15rem', fontWeight: 700, color: G.dark, marginBottom: '0.2rem' }}>
+                  Jéssica Souza
+                </p>
+                <p style={{ color: G.gold, fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                  Fundadora & Chef
+                </p>
+              </div>
+            </div>
+
+            {/* bio */}
+            <div>
+              <SectionTag label="Nossa Chef" />
+              <h2 style={{ fontFamily: serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 700,
+                           color: G.dark, margin: '1rem 0 1.25rem', lineHeight: 1.2 }}>
+                Uma cozinheira que<br />
+                <span style={{ color: G.terra }}>acredita no que faz.</span>
+              </h2>
+
+              <p style={{ color: '#5A4435', lineHeight: 1.85, fontSize: '0.95rem', marginBottom: '1rem' }}>
+                Jéssica construiu a Nefertari a partir de uma convicção simples: comer bem não precisa ser
+                complicado, mas precisa ser real. Cada receita saiu de uma pesquisa, de uma tentativa, de
+                um acerto — e de muita vontade de oferecer algo diferente em Jequié.
+              </p>
+
+              <p style={{ color: '#5A4435', lineHeight: 1.85, fontSize: '0.95rem', marginBottom: '2rem' }}>
+                Antes da Nefertari havia a Safrão da Terra — e antes disso, uma cozinheira que não
+                se contentava com o genérico. A transição não foi só de nome. Foi de propósito.
+                Uma cozinha que se abriu para mais pessoas, sem abrir mão de nenhum detalhe.
+              </p>
+
+              <blockquote style={{
+                borderLeft: `3px solid ${G.terra}`,
+                paddingLeft: '1.25rem', margin: 0,
+                background: 'rgba(139,64,48,0.05)', borderRadius: '0 0.75rem 0.75rem 0',
+                padding: '1rem 1.25rem',
+              }}>
+                <p style={{ fontFamily: serif, fontSize: '1rem', color: G.dark,
+                            fontStyle: 'italic', lineHeight: 1.65, margin: 0 }}>
+                  "Não faço comida para impressionar. Faço para nutrir — e isso muda tudo sobre
+                  como eu escolho cada ingrediente."
+                </p>
+                <p style={{ color: G.terra, fontSize: '0.72rem', fontWeight: 600,
+                            letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '0.75rem' }}>
+                  — Jéssica Souza
+                </p>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <GoldLine />
 
       {/* ═══════════════════════════════════════════════════════════════════
           CARDÁPIO PREVIEW
