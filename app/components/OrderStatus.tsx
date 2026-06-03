@@ -83,18 +83,12 @@ export default function OrderStatus() {
           <ArrowLeft size={16} /> Cardápio
         </Link>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={dark ? '/nefertari-logo-golden.png' : '/nefertari-logo-v2.png'}
-            alt="Nefertari"
-            style={{ height: '28px', objectFit: 'contain' }}
-          />
-          <span style={{ fontFamily: serif, fontSize: '0.72rem', fontWeight: 600,
-                         color: T.muted, letterSpacing: '0.05em' }}>
-            Acompanhar pedido
-          </span>
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={dark ? '/nefertari-logo-golden.png' : '/nefertari-logo-v2.png'}
+          alt="Nefertari"
+          style={{ height: '38px', objectFit: 'contain' }}
+        />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <button onClick={fetchOrder} style={{ background: 'none', border: 'none', cursor: 'pointer',
@@ -193,10 +187,22 @@ export default function OrderStatus() {
               <p style={{ color: T.muted, fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em',
                           textTransform: 'uppercase', marginBottom: '0.75rem' }}>Itens</p>
               {order.items.map(i => (
-                <div key={i.id} style={{ display: 'flex', justifyContent: 'space-between',
-                                          fontSize: '0.88rem', padding: '0.25rem 0', color: T.text }}>
-                  <span>{i.qty}× {i.name}</span>
-                  <span style={{ color: T.muted }}>{fmt(i.price * i.qty)}</span>
+                <div key={i.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem',
+                                          padding: '0.4rem 0',
+                                          borderBottom: `1px solid ${T.border}` }}>
+                  {/* item photo */}
+                  {(i as {imageUrl?:string}).imageUrl && (
+                    <div style={{ width:'44px', height:'44px', borderRadius:'0.5rem', flexShrink:0,
+                                  overflow:'hidden', border:`1px solid ${T.border}` }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={(i as {imageUrl?:string}).imageUrl} alt={i.name}
+                           style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                    </div>
+                  )}
+                  <div style={{ flex:1 }}>
+                    <p style={{ fontSize:'0.88rem', color:T.text, fontWeight:500 }}>{i.qty}× {i.name}</p>
+                  </div>
+                  <span style={{ color:T.muted, fontSize:'0.85rem', flexShrink:0 }}>{fmt(i.price * i.qty)}</span>
                 </div>
               ))}
               <div style={{ borderTop: `1px solid ${T.border}`, marginTop: '0.5rem', paddingTop: '0.5rem',

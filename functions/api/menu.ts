@@ -1,15 +1,17 @@
 interface Env { NEFERTARI_KV: KVNamespace; }
 
 export interface MenuItem {
-  id:          string;
-  category:    string;
-  name:        string;
-  description: string;
-  price:       number;
-  available:   boolean;
-  tags:        string[];
-  imageUrl?:   string;           // primary photo (base64 or URL)
-  images?:     string[];         // multiple photos (e.g. two angles for batata frita)
+  id:           string;
+  category:     string;
+  name:         string;
+  description:  string;
+  price:        number;
+  available:    boolean;
+  tags:         string[];
+  imageUrl?:    string;          // primary photo (base64 or URL)
+  images?:      string[];        // all photos for gallery
+  calories?:    number;          // kcal per serving
+  ingredients?: string[];        // ingredient list for modal
 }
 
 export interface MenuCategory {

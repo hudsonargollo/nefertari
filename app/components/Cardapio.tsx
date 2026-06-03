@@ -30,11 +30,11 @@ const phoneFormat = (v: string) => {
 interface MenuItem {
   id: string; category: string;
   name: string; description: string; price: number; available: boolean; tags: string[];
-  imageUrl?: string;
-  images?:   string[];
+  imageUrl?: string; images?: string[];
+  calories?: number; ingredients?: string[];
 }
 interface MenuCategory { id: string; label: string; sub: string; roman: string; }
-interface CartItem { id: string; name: string; price: number; qty: number; }
+interface CartItem { id: string; name: string; price: number; qty: number; imageUrl?: string; }
 interface CheckoutForm {
   name: string; phone: string; type: 'pickup' | 'delivery';
   cep: string; street: string; number: string; complement: string; neighborhood: string; city: string;
@@ -52,6 +52,161 @@ const FALLBACK_CATS: MenuCategory[] = [
   { id:'side',   label:'Acompanhamentos',   sub:'Para completar',          roman:'III' },
   { id:'drink',  label:'Bebidas',           sub:'Frescas e simples',       roman:'IV'  },
 ];
+
+// ─── Item Detail Modal ────────────────────────────────────────────────────────
+function ItemDetailModal({ item, qty, dark, T, onAdd, onRemove, onClose }: {
+  item: MenuItem; qty: number; dark: boolean; T: import('../lib/useTheme').ThemeTokens;
+  onAdd: () => void; onRemove: () => void; onClose: () => void;
+}) {
+  const [imgIdx, setImgIdx] = useState(0);
+  const allPhotos = item.images?.length ? item.images : item.imageUrl ? [item.imageUrl] : [];
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:95, backdropFilter:'blur(8px)' }} />
+      <div style={{
+        position:'fixed', bottom:0, left:0, right:0, zIndex:96,
+        background: T.card,
+        borderRadius:'1.5rem 1.5rem 0 0',
+        maxHeight:'90dvh', overflowY:'auto',
+        boxShadow:'0 -8px 48px rgba(0,0,0,0.4)',
+      }}>
+        {/* Photo gallery */}
+        {allPhotos.length > 0 && (
+          <div style={{ position:'relative', height:'240px', overflow:'hidden',
+                        borderRadius:'1.5rem 1.5rem 0 0', background: dark ? '#0a0806' : T.bg2 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={allPhotos[imgIdx]} alt={item.name}
+                 style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+            {/* photo dots */}
+            {allPhotos.length > 1 && (
+              <div style={{ position:'absolute', bottom:'0.75rem', left:'50%', transform:'translateX(-50%)',
+                            display:'flex', gap:'0.4rem' }}>
+                {allPhotos.map((_, i) => (
+                  <button key={i} onClick={() => setImgIdx(i)} style={{
+                    width: i===imgIdx ? '20px' : '6px', height:'6px', borderRadius:'99px',
+                    background: i===imgIdx ? G.gold : 'rgba(255,255,255,0.5)',
+                    border:'none', cursor:'pointer', padding:0,
+                    transition:'all 0.2s',
+                  }} />
+                ))}
+              </div>
+            )}
+            {/* close button */}
+            <button onClick={onClose} style={{
+              position:'absolute', top:'0.75rem', right:'0.75rem',
+              width:'32px', height:'32px', borderRadius:'50%',
+              background:'rgba(0,0,0,0.5)', border:'none', cursor:'pointer',
+              display:'flex', alignItems:'center', justifyContent:'center',
+              backdropFilter:'blur(4px)',
+            }}>
+              <X size={15} color="#fff" />
+            </button>
+          </div>
+        )}
+
+        <div style={{ padding:'1.5rem' }}>
+          {/* Header */}
+          <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'0.75rem' }}>
+            <div style={{ flex:1 }}>
+              <h2 style={{ fontFamily:serif, fontSize:'1.4rem', fontWeight:700, color:T.text, marginBottom:'0.3rem' }}>
+                {item.name}
+              </h2>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:'0.4rem' }}>
+                {item.tags.map(t => (
+                  <span key={t} style={{ fontSize:'0.62rem', fontWeight:700, padding:'0.15rem 0.55rem',
+                                         borderRadius:'99px', border:`1px solid ${G.green}50`, color:G.green,
+                                         letterSpacing:'0.1em', textTransform:'uppercase' }}>{t}</span>
+                ))}
+              </div>
+            </div>
+            <p style={{ color:G.gold, fontWeight:700, fontSize:'1.2rem', marginLeft:'1rem', flexShrink:0 }}>
+              {fmt(item.price)}
+            </p>
+          </div>
+
+          {/* Description */}
+          <p style={{ color:T.muted, fontSize:'0.9rem', lineHeight:1.7, marginBottom:'1rem' }}>
+            {item.description}
+          </p>
+
+          {/* Calories */}
+          {item.calories && (
+            <div style={{ display:'inline-flex', alignItems:'center', gap:'0.4rem',
+                          padding:'0.3rem 0.75rem', borderRadius:'99px',
+                          background: dark ? 'rgba(200,148,26,0.1)' : `${G.gold}12`,
+                          border:`1px solid ${G.gold}30`, marginBottom:'1rem' }}>
+              <span style={{ fontSize:'0.85rem' }}>🔥</span>
+              <span style={{ color:G.gold, fontSize:'0.8rem', fontWeight:600 }}>
+                {item.calories} kcal por porção
+              </span>
+            </div>
+          )}
+
+          {/* Ingredients */}
+          {item.ingredients && item.ingredients.length > 0 && (
+            <div style={{ marginBottom:'1.25rem' }}>
+              <p style={{ color:T.muted, fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.2em',
+                          textTransform:'uppercase', marginBottom:'0.6rem' }}>
+                Ingredientes
+              </p>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:'0.4rem' }}>
+                {item.ingredients.map((ing, i) => (
+                  <span key={i} style={{ fontSize:'0.78rem', padding:'0.25rem 0.65rem',
+                                         borderRadius:'99px', color:T.muted,
+                                         background: dark ? 'rgba(255,255,255,0.06)' : T.bg2,
+                                         border:`1px solid ${T.border}` }}>
+                    {ing}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Add to cart */}
+          {item.available ? (
+            qty === 0 ? (
+              <button onClick={() => { onAdd(); onClose(); }} style={{
+                width:'100%', padding:'0.95rem', background:G.gold, color:'#14100C',
+                border:'none', borderRadius:'99px', fontWeight:700, fontSize:'0.95rem',
+                cursor:'pointer', fontFamily:sans,
+                display:'flex', alignItems:'center', justifyContent:'center', gap:'0.5rem',
+              }}>
+                <Plus size={16} /> Adicionar ao pedido — {fmt(item.price)}
+              </button>
+            ) : (
+              <div style={{ display:'flex', alignItems:'center', gap:'1rem' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'0.75rem',
+                              background: dark ? 'rgba(255,255,255,0.06)' : T.bg2,
+                              borderRadius:'99px', padding:'0.5rem 1rem' }}>
+                  <button onClick={onRemove} style={{ background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center' }}>
+                    <Minus size={16} color={T.muted} />
+                  </button>
+                  <span style={{ fontWeight:700, fontSize:'1rem', color:T.text, minWidth:'1.5rem', textAlign:'center' }}>{qty}</span>
+                  <button onClick={onAdd} style={{ background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center' }}>
+                    <Plus size={16} color={G.gold} />
+                  </button>
+                </div>
+                <button onClick={onClose} style={{
+                  flex:1, padding:'0.85rem', background:G.gold, color:'#14100C',
+                  border:'none', borderRadius:'99px', fontWeight:700, fontSize:'0.9rem',
+                  cursor:'pointer', fontFamily:sans,
+                }}>
+                  Ver pedido ({fmt(item.price * qty)})
+                </button>
+              </div>
+            )
+          ) : (
+            <p style={{ textAlign:'center', color:T.muted, fontSize:'0.88rem', padding:'0.75rem' }}>
+              Item indisponível no momento
+            </p>
+          )}
+        </div>
+      </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </>
+  );
+}
 
 // ─── Cart panel ───────────────────────────────────────────────────────────────
 function CartPanel({ cart, onClose, onUpdateQty, onCheckout, total }: {
@@ -405,6 +560,7 @@ export default function Cardapio() {
   const [cartOpen,     setCartOpen]     = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [orderId,      setOrderId]      = useState('');
+  const [detailItem,   setDetailItem]   = useState<MenuItem | null>(null);
 
   useEffect(() => {
     fetch('/api/menu')
@@ -421,7 +577,7 @@ export default function Cardapio() {
     setCart(prev => {
       const ex = prev.find(c => c.id === item.id);
       if (ex) return prev.map(c => c.id===item.id ? {...c, qty:c.qty+1} : c);
-      return [...prev, { id:item.id, name:item.name, price:item.price, qty:1 }];
+      return [...prev, { id:item.id, name:item.name, price:item.price, qty:1, imageUrl:item.imageUrl }];
     });
   }, []);
 
@@ -561,37 +717,34 @@ export default function Cardapio() {
                   gap: '1.25rem',
                   opacity: item.available ? 1 : 0.4,
                 }}>
-                  {/* product image — single or dual (e.g. batata frita) */}
-                  {item.images && item.images.length > 1 ? (
-                    <div style={{ display:'flex', gap:'3px', flexShrink:0 }}>
-                      {item.images.slice(0,2).map((src, idx) => (
-                        <div key={idx} style={{ width:'52px', height:'72px', borderRadius:'0.6rem',
-                                                overflow:'hidden', border:`1px solid ${dark ? 'rgba(200,148,26,0.18)' : T.border}`,
-                                                background: dark ? 'rgba(255,255,255,0.06)' : T.bg2 }}>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={src} alt={`${item.name} ${idx+1}`}
-                               style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div style={{ width:'72px', height:'72px', borderRadius:'0.75rem', flexShrink:0,
-                                  overflow:'hidden', border:`1px solid ${dark ? 'rgba(200,148,26,0.18)' : T.border}`,
-                                  background: dark ? 'rgba(255,255,255,0.06)' : T.bg2,
-                                  display:'flex', alignItems:'center', justifyContent:'center' }}>
-                      {item.imageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.imageUrl} alt={item.name}
-                             style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                      ) : (
-                        <span style={{ fontFamily:serif, fontSize:'1.4rem', color:`${G.gold}40` }}>
-                          {item.name[0]}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  {/* single product photo — always one, click opens detail */}
+                  <button onClick={() => item.available && setDetailItem(item)} style={{
+                    width:'72px', height:'72px', borderRadius:'0.75rem', flexShrink:0,
+                    overflow:'hidden', border:`1px solid ${dark ? 'rgba(200,148,26,0.18)' : T.border}`,
+                    background: dark ? 'rgba(255,255,255,0.06)' : T.bg2,
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    padding:0, cursor: item.available ? 'pointer' : 'default',
+                    position:'relative',
+                  }}>
+                    {item.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={item.imageUrl} alt={item.name}
+                           style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                    ) : (
+                      <span style={{ fontFamily:serif, fontSize:'1.4rem', color:`${G.gold}40` }}>
+                        {item.name[0]}
+                      </span>
+                    )}
+                    {/* multi-photo indicator dot */}
+                    {(item.images?.length ?? 0) > 1 && (
+                      <span style={{ position:'absolute', bottom:'4px', right:'4px',
+                                     width:'6px', height:'6px', borderRadius:'50%',
+                                     background:G.gold, opacity:0.8 }} />
+                    )}
+                  </button>
 
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ flex: 1, minWidth: 0, cursor: item.available ? 'pointer' : 'default' }}
+                       onClick={() => item.available && setDetailItem(item)}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem',
                                   flexWrap: 'wrap', marginBottom: '0.35rem' }}>
                       <h3 style={{ fontFamily: serif, fontSize: '1.05rem', fontWeight: 700,
@@ -679,6 +832,15 @@ export default function Cardapio() {
       {cartOpen     && <CartPanel cart={cart} total={total} onClose={()=>setCartOpen(false)}
                                   onUpdateQty={updateQty} onCheckout={()=>{setCartOpen(false);setCheckoutOpen(true);}} />}
       {checkoutOpen && <CheckoutModal cart={cart} total={total} onClose={()=>setCheckoutOpen(false)} onSuccess={handleSuccess} />}
+      {detailItem   && (
+        <ItemDetailModal
+          item={detailItem} dark={dark} T={T}
+          qty={cart.find(c => c.id===detailItem.id)?.qty ?? 0}
+          onAdd={() => addToCart(detailItem)}
+          onRemove={() => updateQty(detailItem.id, -1)}
+          onClose={() => setDetailItem(null)}
+        />
+      )}
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>

@@ -19,6 +19,7 @@ const fmt   = (n: number) => `R$ ${n.toFixed(2).replace('.', ',')}`;
 interface MenuItem {
   id:string; category:string; name:string; description:string;
   price:number; available:boolean; tags:string[]; imageUrl?:string; images?:string[];
+  calories?:number; ingredients?:string[];
 }
 interface MenuCategory { id:string; label:string; sub:string; roman:string; }
 
@@ -76,6 +77,8 @@ function ItemModal({ item, categories, onSave, onClose }: {
     tags:        item?.tags        ?? [],
     imageUrl:    item?.imageUrl    ?? '',
     images:      initImages(),
+    calories:    item?.calories,
+    ingredients: item?.ingredients ?? [],
   });
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -280,6 +283,40 @@ function ItemModal({ item, categories, onSave, onClose }: {
                 );
               })}
             </div>
+          </div>
+
+          {/* Calories */}
+          <div>
+            <label style={lbl}>Calorias por porção <span style={{ fontWeight:400, textTransform:'none', letterSpacing:0 }}>(opcional)</span></label>
+            <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
+              <input
+                type="number" min="0" step="10"
+                value={form.calories ?? ''}
+                onChange={e => set('calories', e.target.value ? Number(e.target.value) : undefined as unknown as number)}
+                placeholder="Ex: 420"
+                style={{ ...inp, width:'120px' }}
+              />
+              <span style={{ color:G.muted, fontSize:'0.82rem' }}>kcal</span>
+            </div>
+          </div>
+
+          {/* Ingredients */}
+          <div>
+            <label style={lbl}>
+              Ingredientes <span style={{ fontWeight:400, textTransform:'none', letterSpacing:0 }}>(um por linha · opcional)</span>
+            </label>
+            <textarea
+              rows={4}
+              value={(form.ingredients ?? []).join('\n')}
+              onChange={e => set('ingredients', e.target.value.split('\n').map(s => s.trim()).filter(Boolean))}
+              placeholder={'Grão de bico\nHúmus artesanal\nFolhas frescas\nTomate'}
+              style={{ ...inp, resize:'vertical' }}
+            />
+            {(form.ingredients ?? []).length > 0 && (
+              <p style={{ color:G.muted, fontSize:'0.68rem', marginTop:'0.3rem' }}>
+                {(form.ingredients ?? []).length} ingrediente{(form.ingredients ?? []).length !== 1 ? 's' : ''} listado{(form.ingredients ?? []).length !== 1 ? 's' : ''}
+              </p>
+            )}
           </div>
 
           {/* Save */}
