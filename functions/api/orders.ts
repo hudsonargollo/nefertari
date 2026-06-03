@@ -1,15 +1,23 @@
+import { queueNotification } from './auth.js';
+
 interface Env { NEFERTARI_KV: KVNamespace; }
 
+const SELOS_PER_CYCLE = 10;
+
 export interface CRMCustomer {
-  phone:      string;
-  name:       string;
-  orderCount: number;
-  totalSpent: number;
-  firstOrder: string;
-  lastOrder:  string;
-  orders:     string[];
-  notes:      string;
-  tags:       string[];
+  phone:            string;
+  name:             string;
+  orderCount:       number;
+  totalSpent:       number;
+  firstOrder:       string;
+  lastOrder:        string;
+  orders:           string[];
+  notes:            string;
+  tags:             string[];
+  loyaltyPoints?:   number;   // 0-(SELOS_PER_CYCLE-1), resets on reward claim
+  totalCycles?:     number;
+  pendingReward?:   boolean;
+  pinHash?:         string;
 }
 
 export interface OrderItem { id: string; name: string; price: number; qty: number; }
@@ -81,16 +89,63 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const existing   = await env.NEFERTARI_KV.get(crmKey, { type: 'json' }) as CRMCustomer | null;
     const crmIdx     = (await env.NEFERTARI_KV.get(crmIdxKey, { type: 'json' }) as string[] | null) ?? [];
 
+    // ── Loyalty calculation ──────────────────────────────────────────────────
+    const prevPoints  = existing?.loyaltyPoints  ?? 0;
+    const prevCycles  = existing?.totalCycles    ?? 0;
+    const prevPending = existing?.pendingReward  ?? false;
+
+    // Verify auth token matches the ordering customer (loyalty only credited when authenticated)
+    const authToken = request.headers.get('X-Auth-Token');
+    let tokenPhone: string | null = null;
+    if (authToken) {
+      const authData = await env.NEFERTARI_KV.get(`auth:${authToken}`, { type:'json' }) as { phone:string; expires:number }|null;
+      if (authData && Date.now() < authData.expires) tokenPhone = authData.phone;
+    }
+    const isRegistered = !!existing?.pinHash && tokenPhone === phone;
+    let newPoints  = prevPoints;
+    let newCycles  = prevCycles;
+    let newPending = prevPending;
+
+    if (isRegistered && !prevPending) {
+      newPoints = prevPoints + 1;
+      if (newPoints >= SELOS_PER_CYCLE) {
+        newPoints  = 0;
+        newCycles  = prevCycles + 1;
+        newPending = true;
+        // Trigger 4: reward unlocked
+        await queueNotification(env, {
+          phone, name: body.customer.name, trigger: 'reward_unlocked',
+          message: `Você chegou lá! 🎉 Sua recompensa sazonal está liberada. Entre no nosso cardápio, faça seu login e adicione o presente da Jess no seu próximo carrinho. Obrigado por valorizar a comida de verdade!`,
+        });
+      } else if (newPoints === 9) {
+        // Trigger 3: one away
+        await queueNotification(env, {
+          phone, name: body.customer.name, trigger: 'one_away',
+          message: `Falta só mais um, ${body.customer.name}! 🤎 No seu próximo pedido com a gente, você desbloqueia a surpresa especial que a Jess criou para essa estação. O que será que vem por aí?`,
+        });
+      } else if (newPoints === 5) {
+        // Trigger 2: halfway
+        await queueNotification(env, {
+          phone, name: body.customer.name, trigger: 'halfway',
+          message: `Metade do caminho, ${body.customer.name}! ✨ Você já tem 5 selos. A receita sazonal dessa estação já tá quase nas suas mãos. Bom apetite e até o próximo pedido!`,
+        });
+      }
+    }
+
     const updated: CRMCustomer = {
       phone,
-      name:        body.customer.name,
-      orderCount:  (existing?.orderCount  ?? 0) + 1,
-      totalSpent:  (existing?.totalSpent  ?? 0) + body.total,
-      firstOrder:  existing?.firstOrder ?? now,
-      lastOrder:   now,
-      orders:      [id, ...(existing?.orders ?? [])].slice(0, 50),
-      notes:       existing?.notes ?? '',
-      tags:        existing?.tags  ?? [],
+      name:           body.customer.name,
+      orderCount:     (existing?.orderCount  ?? 0) + 1,
+      totalSpent:     (existing?.totalSpent  ?? 0) + body.total,
+      firstOrder:     existing?.firstOrder ?? now,
+      lastOrder:      now,
+      orders:         [id, ...(existing?.orders ?? [])].slice(0, 50),
+      notes:          existing?.notes      ?? '',
+      tags:           existing?.tags       ?? [],
+      pinHash:        existing?.pinHash,
+      loyaltyPoints:  newPoints,
+      totalCycles:    newCycles,
+      pendingReward:  newPending,
     };
 
     const newCrmIdx = crmIdx.includes(phone) ? crmIdx : [phone, ...crmIdx];

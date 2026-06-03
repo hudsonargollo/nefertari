@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { ArrowLeft, Plus, Minus, ShoppingBag, X, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useTheme } from '../lib/useTheme';
 import ThemeToggle from './ThemeToggle';
+import LoyaltyBadge from './LoyaltyBadge';
+import CustomerAuth from './CustomerAuth';
 
 // ─── Static tokens (gold/green/terra never change between themes) ─────────────
 const G = {
@@ -288,8 +290,8 @@ function CartPanel({ cart, onClose, onUpdateQty, onCheckout, total }: {
 }
 
 // ─── Checkout modal ───────────────────────────────────────────────────────────
-function CheckoutModal({ cart, total, onClose, onSuccess }: {
-  cart: CartItem[]; total: number; onClose: () => void; onSuccess: (id: string) => void;
+function CheckoutModal({ cart, total, authToken, onClose, onSuccess }: {
+  cart: CartItem[]; total: number; authToken: string | null; onClose: () => void; onSuccess: (id: string) => void;
 }) {
   const EMPTY: CheckoutForm = { name:'', phone:'', type:'pickup', cep:'', street:'', number:'', complement:'', neighborhood:'', city:'', notes:'' };
   const [form,      setForm]      = useState<CheckoutForm>(EMPTY);
@@ -337,8 +339,10 @@ function CheckoutModal({ cart, total, onClose, onSuccess }: {
       const fullAddress = form.type === 'delivery'
         ? `${form.street}, ${form.number}${form.complement ? ` ${form.complement}` : ''} — ${form.neighborhood}, ${form.city} · CEP ${form.cep}`
         : '';
+      const headers: Record<string,string> = { 'Content-Type': 'application/json' };
+      if (authToken) headers['X-Auth-Token'] = authToken;
       const res  = await fetch('/api/orders', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers,
         body: JSON.stringify({ customer: { name: form.name, phone: form.phone },
                                type: form.type, address: fullAddress, notes: form.notes, items: cart, total }),
       });
@@ -560,6 +564,24 @@ export default function Cardapio() {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [orderId,      setOrderId]      = useState('');
   const [detailItem,   setDetailItem]   = useState<MenuItem | null>(null);
+  const [authToken,    setAuthToken]    = useState<string | null>(null);
+  const [authOpen,     setAuthOpen]     = useState(false);
+
+  // Load auth token from localStorage on mount
+  useEffect(() => {
+    try { setAuthToken(localStorage.getItem('nef-customer-token')); } catch {}
+  }, []);
+
+  function handleAuth(token: string) {
+    setAuthToken(token);
+    try { localStorage.setItem('nef-customer-token', token); } catch {}
+    setAuthOpen(false);
+  }
+
+  function handleLogout() {
+    setAuthToken(null);
+    try { localStorage.removeItem('nef-customer-token'); } catch {}
+  }
 
   useEffect(() => {
     fetch('/api/menu')
@@ -835,7 +857,21 @@ export default function Cardapio() {
 
       {cartOpen     && <CartPanel cart={cart} total={total} onClose={()=>setCartOpen(false)}
                                   onUpdateQty={updateQty} onCheckout={()=>{setCartOpen(false);setCheckoutOpen(true);}} />}
-      {checkoutOpen && <CheckoutModal cart={cart} total={total} onClose={()=>setCheckoutOpen(false)} onSuccess={handleSuccess} />}
+      {checkoutOpen && <CheckoutModal cart={cart} total={total} authToken={authToken} onClose={()=>setCheckoutOpen(false)} onSuccess={handleSuccess} />}
+      {/* Loyalty badge */}
+      <LoyaltyBadge dark={dark} authToken={authToken} onOpenAuth={() => setAuthOpen(true)} />
+
+      {/* Customer auth modal */}
+      {authOpen && (
+        <CustomerAuth
+          dark={dark} T={T}
+          authToken={authToken}
+          onClose={() => setAuthOpen(false)}
+          onAuth={handleAuth}
+          onLogout={handleLogout}
+        />
+      )}
+
       {detailItem   && (
         <ItemDetailModal
           item={detailItem} dark={dark} T={T}
