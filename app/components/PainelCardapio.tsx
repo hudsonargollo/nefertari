@@ -18,7 +18,7 @@ const fmt   = (n: number) => `R$ ${n.toFixed(2).replace('.', ',')}`;
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface MenuItem {
   id:string; category:string; name:string; description:string;
-  price:number; available:boolean; tags:string[]; imageUrl?:string;
+  price:number; available:boolean; tags:string[]; imageUrl?:string; images?:string[];
 }
 interface MenuCategory { id:string; label:string; sub:string; roman:string; }
 
@@ -58,6 +58,14 @@ function ItemModal({ item, categories, onSave, onClose }: {
   onClose: () => void;
 }) {
   const isNew = !item?.id;
+
+  // Initialise images[] from existing data
+  const initImages = () => {
+    if (item?.images?.length) return item.images;
+    if (item?.imageUrl)       return [item.imageUrl];
+    return [] as string[];
+  };
+
   const [form, setForm] = useState<MenuItem>({
     id:          item?.id          ?? `item-${Date.now()}`,
     category:    item?.category    ?? categories[0]?.id ?? 'burger',
@@ -67,17 +75,41 @@ function ItemModal({ item, categories, onSave, onClose }: {
     available:   item?.available   ?? true,
     tags:        item?.tags        ?? [],
     imageUrl:    item?.imageUrl    ?? '',
+    images:      initImages(),
   });
-  const [imgBusy, setImgBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const set = <K extends keyof MenuItem>(k: K, v: MenuItem[K]) => setForm(p => ({ ...p, [k]: v }));
 
-  async function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]; if (!f) return;
-    setImgBusy(true);
-    try { set('imageUrl', await compressImage(f)); }
-    finally { setImgBusy(false); }
+  // Add one or more images
+  async function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const compressed = await Promise.all(files.map(compressImage));
+      setForm(prev => {
+        const next = [...(prev.images ?? []), ...compressed];
+        return { ...prev, images: next, imageUrl: next[0] ?? '' };
+      });
+    } finally {
+      setUploading(false);
+      e.target.value = ''; // reset input so same file can be re-added
+    }
+  }
+
+  function removeImage(idx: number) {
+    setForm(prev => {
+      const next = (prev.images ?? []).filter((_, i) => i !== idx);
+      return { ...prev, images: next, imageUrl: next[0] ?? '' };
+    });
+  }
+
+  // Before saving, sync imageUrl = first image
+  function handleSave() {
+    const finalForm = { ...form, imageUrl: form.images?.[0] ?? form.imageUrl ?? '' };
+    if (finalForm.name.trim()) onSave(finalForm);
   }
 
   const inp: React.CSSProperties = {
@@ -111,39 +143,77 @@ function ItemModal({ item, categories, onSave, onClose }: {
 
         <div style={{ padding:'1.5rem',display:'flex',flexDirection:'column',gap:'1rem' }}>
 
-          {/* Image upload */}
+          {/* Multi-image upload */}
           <div>
-            <label style={lbl}>Foto do produto</label>
-            <div style={{ display:'flex',gap:'1rem',alignItems:'center' }}>
-              <div style={{ width:'80px',height:'80px',borderRadius:'0.75rem',flexShrink:0,
-                            border:`1px solid ${G.border}`,background:'rgba(255,255,255,0.04)',
-                            display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden' }}>
-                {imgBusy ? <Loader2 size={20} color={G.gold} style={{ animation:'spin 1s linear infinite' }} />
-                         : form.imageUrl
-                           ? <img src={form.imageUrl} alt="" style={{ width:'100%',height:'100%',objectFit:'cover' }} />
-                           : <ImageIcon size={22} color={G.muted} />}
-              </div>
-              <div style={{ flex:1 }}>
-                <button type="button" onClick={() => fileRef.current?.click()} style={{
-                  padding:'0.6rem 1rem',borderRadius:'0.65rem',border:`1px solid ${G.border}`,
-                  background:'transparent',color:G.muted,cursor:'pointer',fontSize:'0.82rem',
-                  fontFamily:sans,display:'flex',alignItems:'center',gap:'0.4rem',marginBottom:'0.4rem',
-                }}>
-                  <ImageIcon size={13}/> {form.imageUrl ? 'Trocar foto' : 'Adicionar foto'}
-                </button>
-                {form.imageUrl && (
-                  <button type="button" onClick={() => set('imageUrl','')} style={{
-                    padding:'0.4rem 0.75rem',borderRadius:'0.65rem',border:`1px solid rgba(239,68,68,0.3)`,
-                    background:'transparent',color:'#f87171',cursor:'pointer',fontSize:'0.75rem',fontFamily:sans,
-                  }}>Remover foto</button>
-                )}
-                <input ref={fileRef} type="file" accept="image/*" onChange={handleImage}
-                       style={{ display:'none' }} />
-                <p style={{ color:G.muted,fontSize:'0.7rem',marginTop:'0.3rem' }}>
-                  JPG/PNG · comprimida automaticamente
-                </p>
-              </div>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'0.5rem' }}>
+              <label style={lbl}>Fotos do produto</label>
+              <p style={{ color:G.muted, fontSize:'0.65rem' }}>
+                {(form.images?.length ?? 0)} foto{(form.images?.length ?? 0) !== 1 ? 's' : ''} · 1ª = capa
+              </p>
             </div>
+
+            {/* Gallery grid */}
+            <div style={{ display:'flex', flexWrap:'wrap', gap:'0.6rem', marginBottom:'0.75rem' }}>
+              {(form.images ?? []).map((src, idx) => (
+                <div key={idx} style={{ position:'relative', flexShrink:0 }}>
+                  <div style={{ width:'72px', height:'72px', borderRadius:'0.65rem',
+                                overflow:'hidden', border:`1px solid ${idx === 0 ? G.gold : G.border}`,
+                                background:'rgba(255,255,255,0.04)' }}>
+                    <img src={src} alt={`foto ${idx+1}`}
+                         style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  </div>
+                  {/* remove button */}
+                  <button
+                    type="button"
+                    onClick={() => removeImage(idx)}
+                    style={{
+                      position:'absolute', top:'-5px', right:'-5px',
+                      width:'18px', height:'18px', borderRadius:'50%',
+                      background:'#ef4444', border:'2px solid #1A1208',
+                      cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center',
+                    }}>
+                    <X size={9} color="#fff" />
+                  </button>
+                  {/* cover badge */}
+                  {idx === 0 && (
+                    <span style={{ position:'absolute', bottom:'-6px', left:'50%', transform:'translateX(-50%)',
+                                   background:G.gold, color:'#14100C', fontSize:'0.5rem', fontWeight:700,
+                                   padding:'1px 5px', borderRadius:'99px', whiteSpace:'nowrap', letterSpacing:'0.05em' }}>
+                      CAPA
+                    </span>
+                  )}
+                </div>
+              ))}
+
+              {/* Add button */}
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+                style={{
+                  width:'72px', height:'72px', borderRadius:'0.65rem',
+                  border:`1px dashed ${G.border}`, background:'transparent',
+                  cursor:'pointer', display:'flex', flexDirection:'column',
+                  alignItems:'center', justifyContent:'center', gap:'0.25rem',
+                  color: G.muted, flexShrink:0,
+                }}>
+                {uploading
+                  ? <Loader2 size={18} color={G.gold} style={{ animation:'spin 1s linear infinite' }} />
+                  : <><Plus size={18} color={G.muted} /><span style={{ fontSize:'0.58rem' }}>Foto</span></>}
+              </button>
+            </div>
+
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImages}
+              style={{ display:'none' }}
+            />
+            <p style={{ color:G.muted, fontSize:'0.68rem' }}>
+              Selecione uma ou mais fotos · JPG/PNG/WEBP · comprimidas automaticamente
+            </p>
           </div>
 
           {/* Name + Category */}
@@ -213,7 +283,7 @@ function ItemModal({ item, categories, onSave, onClose }: {
           </div>
 
           {/* Save */}
-          <button onClick={() => { if(form.name.trim()) onSave(form); }} style={{
+          <button onClick={handleSave} style={{
             padding:'0.85rem',background:G.gold,color:G.dark,border:'none',
             borderRadius:'99px',fontWeight:700,fontSize:'0.92rem',cursor:'pointer',fontFamily:sans,
             display:'flex',alignItems:'center',justifyContent:'center',gap:'0.4rem',
@@ -422,13 +492,24 @@ export default function PainelCardapio() {
                     background:G.card2,borderRadius:'0.85rem',border:`1px solid ${G.border}`,
                     padding:'0.85rem 1rem',
                   }}>
-                    {/* thumbnail */}
-                    <div style={{ width:'44px',height:'44px',borderRadius:'0.5rem',flexShrink:0,
-                                  border:`1px solid ${G.border}`,background:'rgba(255,255,255,0.05)',
-                                  overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center' }}>
-                      {item.imageUrl
-                        ? <img src={item.imageUrl} alt="" style={{ width:'100%',height:'100%',objectFit:'cover' }}/>
-                        : <span style={{ color:`${G.gold}50`,fontFamily:serif,fontSize:'1.1rem' }}>{item.name[0]}</span>}
+                    {/* thumbnail — show up to 2 images stacked */}
+                    <div style={{ display:'flex', gap:'2px', flexShrink:0 }}>
+                      {((item.images?.length ?? 0) > 0 ? (item.images ?? []) : item.imageUrl ? [item.imageUrl] : [])
+                        .slice(0, 2)
+                        .map((src, idx) => (
+                          <div key={idx} style={{ width:'44px', height:'44px', borderRadius:'0.5rem',
+                                                   border:`1px solid ${G.border}`, background:'rgba(255,255,255,0.05)',
+                                                   overflow:'hidden', flexShrink:0 }}>
+                            <img src={src} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                          </div>
+                        ))}
+                      {(item.images?.length ?? 0) === 0 && !item.imageUrl && (
+                        <div style={{ width:'44px', height:'44px', borderRadius:'0.5rem',
+                                      border:`1px solid ${G.border}`, background:'rgba(255,255,255,0.05)',
+                                      display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                          <span style={{ color:`${G.gold}50`, fontFamily:serif, fontSize:'1.1rem' }}>{item.name[0]}</span>
+                        </div>
+                      )}
                     </div>
 
                     <div style={{ flex:1,minWidth:0 }}>
