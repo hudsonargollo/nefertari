@@ -177,7 +177,7 @@ export default function Home() {
         {/* logo */}
         <div style={{ marginBottom: '1.25rem' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/nefertari-logo-v2.png" alt="Nefertari Cozinha Viva"
+          <img src="/nefertari-logo-golden.png" alt="Nefertari Cozinha Viva"
                style={{ width: 'clamp(140px, 22vw, 210px)', height: 'auto', objectFit: 'contain' }} />
         </div>
 
