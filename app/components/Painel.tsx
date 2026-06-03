@@ -146,16 +146,17 @@ function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
 }
 
 // ─── Order Card ───────────────────────────────────────────────────────────────
-function OrderCard({ order, onStatusChange, updating }: {
+function OrderCard({ order, onStatusChange, updating, cardBg, cardBorder, itemBg }: {
   order: Order;
   onStatusChange: (id: string, status: OrderStatus) => void;
   updating: boolean;
+  cardBg: string; cardBorder: string; itemBg: string;
 }) {
   const cfg = STATUS[order.status];
 
   return (
     <div style={{
-      background: T.card, borderRadius: '1.25rem', border: `1px solid ${T.border}`,
+      background: cardBg, borderRadius: '1.25rem', border: `1px solid ${cardBorder}`,
       overflow: 'hidden', transition: 'box-shadow 0.2s',
       boxShadow: order.status === 'received' ? '0 0 0 2px rgba(200,148,26,0.4)' : 'none',
     }}>
@@ -190,7 +191,7 @@ function OrderCard({ order, onStatusChange, updating }: {
         </div>
 
         {/* items */}
-        <div style={{ background: T.bg, borderRadius: '0.75rem', padding: '0.75rem',
+        <div style={{ background: itemBg, borderRadius: '0.75rem', padding: '0.75rem',
                       marginBottom: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           {order.items.map(i => (
             <div key={i.id} style={{ display: 'flex', justifyContent: 'space-between',
@@ -526,7 +527,8 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
                       ) : colOrders.map(order => (
                         <OrderCard key={order.id} order={order}
                                    onStatusChange={updateStatus}
-                                   updating={updating === order.id} />
+                                   updating={updating === order.id}
+                                   cardBg={T.card} cardBorder={T.border} itemBg={T.bg} />
                       ))}
                     </div>
                   </div>
