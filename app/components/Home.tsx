@@ -89,19 +89,10 @@ function Nav() {
         transition: 'all 0.3s ease',
       }}
     >
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.5rem' }}
-           className="flex items-center justify-between h-16">
-        {/* logo text */}
-        <a href="#topo" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: serif, color: G.parch, fontSize: '1.1rem', fontWeight: 700, letterSpacing: '0.02em' }}>
-            Nefertari
-          </span>
-          <span style={{ fontFamily: sans, color: G.gold, fontSize: '0.65rem', letterSpacing: '0.25em', display: 'block', textTransform: 'uppercase', lineHeight: 1, marginTop: '1px' }}>
-            Cozinha Viva
-          </span>
-        </a>
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.5rem',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', height: '64px' }}>
 
-        {/* desktop links */}
+        {/* desktop links — centered */}
         <div className="hidden md:flex items-center gap-8">
           {[['#conceito','Conceito'],['#cardapio','Cardápio'],['#jeito','Nosso jeito']].map(([href, label]) => (
             <a key={href} href={href}
@@ -119,9 +110,10 @@ function Nav() {
           </Link>
         </div>
 
-        {/* mobile toggle */}
+        {/* mobile toggle — absolutely positioned so it doesn't break centering */}
         <button className="md:hidden" onClick={() => setOpen(o => !o)}
-                style={{ color: G.parch, background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+                style={{ color: G.parch, background: 'none', border: 'none', cursor: 'pointer',
+                         padding: '4px', position: 'absolute', right: '1.5rem' }}>
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
