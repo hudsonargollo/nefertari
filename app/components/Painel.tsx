@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { LogOut, RefreshCw, Clock, MapPin, Package, CheckCircle2, Loader2, ChevronRight, Settings, X, Users } from 'lucide-react';
+import { useTheme } from '../lib/useTheme';
+import ThemeToggle from './ThemeToggle';
 
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const G = {
@@ -153,7 +155,7 @@ function OrderCard({ order, onStatusChange, updating }: {
 
   return (
     <div style={{
-      background: '#fff', borderRadius: '1.25rem', border: `1px solid ${G.border}`,
+      background: T.card, borderRadius: '1.25rem', border: `1px solid ${T.border}`,
       overflow: 'hidden', transition: 'box-shadow 0.2s',
       boxShadow: order.status === 'received' ? '0 0 0 2px rgba(200,148,26,0.4)' : 'none',
     }}>
@@ -188,7 +190,7 @@ function OrderCard({ order, onStatusChange, updating }: {
         </div>
 
         {/* items */}
-        <div style={{ background: G.bg, borderRadius: '0.75rem', padding: '0.75rem',
+        <div style={{ background: T.bg, borderRadius: '0.75rem', padding: '0.75rem',
                       marginBottom: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           {order.items.map(i => (
             <div key={i.id} style={{ display: 'flex', justifyContent: 'space-between',
@@ -334,6 +336,7 @@ function ChangePinModal({ token, onClose }: { token: string; onClose: () => void
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function Dashboard({ token, onLogout }: { token: string; onLogout: () => void }) {
+  const { dark, T, toggle } = useTheme();
   const [orders,    setOrders]    = useState<Order[]>([]);
   const [loading,   setLoading]   = useState(true);
   const [updating,  setUpdating]  = useState<string | null>(null);
@@ -398,16 +401,19 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
     .reduce((s, o) => s + o.total, 0);
 
   return (
-    <div style={{ minHeight: '100dvh', background: G.bg, fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100dvh', background: T.bg, fontFamily: 'Inter, system-ui, sans-serif', transition: 'background 0.3s' }}>
 
       {/* ── Top bar ─── */}
-      <header style={{ background: G.dark, padding: '0 1.25rem', height: '56px',
+      <header style={{ background: dark ? G.dark : T.card, padding: '0 1.25rem', height: '56px',
                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                       position: 'sticky', top: 0, zIndex: 40 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/nefertari-logo-v2.png" alt="Nefertari" style={{ height: '32px', objectFit: 'contain' }} />
-          <span style={{ color: G.muted, fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                       position: 'sticky', top: 0, zIndex: 40,
+                       borderBottom: `1px solid ${T.border}` }}>
+        {/* Text logo — no image */}
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+          <span style={{ fontFamily: serif, fontWeight: 700, fontSize: '1rem', color: T.text, letterSpacing: '0.01em' }}>
+            Nefertari
+          </span>
+          <span style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
             Cozinha
           </span>
         </div>
@@ -423,31 +429,32 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
             </span>
           )}
           <button onClick={fetchOrders} style={{ background: 'none', border: 'none', cursor: 'pointer',
-                                                  color: G.muted, padding: '6px' }}>
+                                                  color: T.muted, padding: '6px', display:'flex', alignItems:'center' }}>
             <RefreshCw size={16} />
           </button>
-          <Link href="/painel/cardapio" style={{ color: G.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }} title="Gerenciar cardápio">
+          <ThemeToggle dark={dark} onToggle={toggle} position="static" />
+          <Link href="/painel/cardapio" style={{ color: T.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }} title="Gerenciar cardápio">
             <span style={{ fontSize: '0.75rem', fontWeight: 700 }}>◈</span>
           </Link>
-          <Link href="/painel/fidelidade" style={{ color: G.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }} title="Programa de fidelidade">
+          <Link href="/painel/fidelidade" style={{ color: T.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }} title="Programa de fidelidade">
             <span style={{ fontSize: '0.85rem' }}>🎁</span>
           </Link>
-          <Link href="/painel/clientes" style={{ color: G.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }}>
+          <Link href="/painel/clientes" style={{ color: T.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }}>
             <Users size={16} />
           </Link>
           <button onClick={() => setPinModal(true)} style={{ background: 'none', border: 'none',
-                                                              cursor: 'pointer', color: G.muted, padding: '6px' }}>
+                                                              cursor: 'pointer', color: T.muted, padding: '6px' }}>
             <Settings size={16} />
           </button>
           <button onClick={onLogout} style={{ background: 'none', border: 'none', cursor: 'pointer',
-                                              color: G.muted, padding: '6px' }}>
+                                              color: T.muted, padding: '6px' }}>
             <LogOut size={16} />
           </button>
         </div>
       </header>
 
       {/* ── Stats bar ─── */}
-      <div style={{ background: '#fff', borderBottom: `1px solid ${G.border}`,
+      <div style={{ background: T.card, borderBottom: `1px solid ${T.border}`,
                     padding: '0.75rem 1.25rem', display: 'flex', gap: '1.5rem', overflowX: 'auto' }}>
         {[
           { label: 'Ativos agora',    value: String(active.length)       },
@@ -457,21 +464,21 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
               new Date(o.created_at).toDateString() === new Date().toDateString()).length) },
         ].map(s => (
           <div key={s.label} style={{ flexShrink: 0 }}>
-            <p style={{ color: G.muted, fontSize: '0.65rem', textTransform: 'uppercase',
+            <p style={{ color: T.muted, fontSize: '0.65rem', textTransform: 'uppercase',
                         letterSpacing: '0.1em', marginBottom: '0.1rem' }}>{s.label}</p>
-            <p style={{ fontWeight: 700, fontSize: '1.1rem', color: G.dark }}>{s.value}</p>
+            <p style={{ fontWeight: 700, fontSize: '1.1rem', color: T.text }}>{s.value}</p>
           </div>
         ))}
       </div>
 
       {/* ── Tabs ─── */}
-      <div style={{ background: '#fff', borderBottom: `1px solid ${G.border}`,
+      <div style={{ background: T.card, borderBottom: `1px solid ${T.border}`,
                     display: 'flex', padding: '0 1.25rem' }}>
         {([['active','Ativos'] ,['history','Histórico']] as const).map(([key, label]) => (
           <button key={key} onClick={() => setTab(key)} style={{
             background: 'none', border: 'none', cursor: 'pointer',
             padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.85rem',
-            color: tab === key ? G.dark : G.muted,
+            color: tab === key ? T.text : T.muted,
             borderBottom: tab === key ? `2px solid ${G.gold}` : '2px solid transparent',
           }}>{label}{key === 'active' && active.length > 0 &&
             <span style={{ marginLeft: '0.4rem', background: G.gold, color: G.dark,
