@@ -244,7 +244,7 @@ export default function Milestone02() {
           </h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem' }}>
+        <div className="m02-grid-2x2" style={{ display: 'grid', gap: '1.25rem' }}>
           {deliverables.map(d => (
             <div key={d.num} style={{
               background: '#fff', borderRadius: '1.25rem', border: `1px solid ${G.border}`,
@@ -294,7 +294,7 @@ export default function Milestone02() {
 
       {/* ── Acesso & PINs ── */}
       <section style={{ padding: '3rem 1.5rem' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+        <div className="m02-grid-auto" style={{ maxWidth: '1000px', margin: '0 auto', display: 'grid', gap: '1.25rem' }}>
 
           {/* Admin PIN */}
           <div style={{ background: '#fff', borderRadius: '1rem', border: `1px solid ${G.border}`,
@@ -558,6 +558,15 @@ export default function Milestone02() {
           </div>
         </div>
       </section>
+
+      <style>{`
+        .m02-grid-2x2    { grid-template-columns: repeat(2, 1fr); }
+        .m02-grid-auto   { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+        @media (max-width: 600px) {
+          .m02-grid-2x2  { grid-template-columns: 1fr; }
+          .m02-grid-auto { grid-template-columns: 1fr; }
+        }
+      `}</style>
 
       {/* ── Footer ── */}
       <footer style={{ background: G.dark, borderTop: `1px solid rgba(200,148,26,0.1)`, padding: '2rem 1.5rem', textAlign: 'center' }}>
