@@ -148,14 +148,24 @@ function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
 }
 
 // ─── Order Card ───────────────────────────────────────────────────────────────
-function OrderCard({ order, onStatusChange, onSendMessage, updating, cardBg, cardBorder, itemBg }: {
+function OrderCard({ order, onStatusChange, onSendMessage, updating, cardBg, cardBorder, itemBg, dark }: {
   order: Order;
   onStatusChange: (id: string, status: OrderStatus) => void;
   onSendMessage: (order: Order) => void;
   updating: boolean;
   cardBg: string; cardBorder: string; itemBg: string;
+  dark: boolean;
 }) {
   const cfg = STATUS[order.status];
+  const textClr = dark ? '#E8D9BA' : '#14100C';
+  const mutedClr = dark ? '#A89070' : '#6B5040';
+  const statusBg = dark ? (
+    order.status === 'received' ? 'rgba(200,148,26,0.2)' :
+    order.status === 'preparing' ? 'rgba(139,64,48,0.25)' :
+    order.status === 'ready' ? 'rgba(107,140,62,0.25)' :
+    order.status === 'delivered' ? 'rgba(255,255,255,0.06)' :
+    'rgba(239,68,68,0.2)'
+  ) : cfg.bg;
 
   return (
     <div style={{
@@ -164,13 +174,13 @@ function OrderCard({ order, onStatusChange, onSendMessage, updating, cardBg, car
       boxShadow: order.status === 'received' ? '0 0 0 2px rgba(200,148,26,0.4)' : 'none',
     }}>
       {/* status strip */}
-      <div style={{ background: cfg.bg, padding: '0.6rem 1rem',
+      <div style={{ background: statusBg, padding: '0.6rem 1rem',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em',
                        textTransform: 'uppercase', color: cfg.color }}>
           {cfg.label}
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: G.muted, fontSize: '0.72rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: mutedClr, fontSize: '0.72rem' }}>
           <Clock size={11} />{timeAgo(order.created_at)}
         </div>
       </div>
@@ -180,18 +190,18 @@ function OrderCard({ order, onStatusChange, onSendMessage, updating, cardBg, car
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <p style={{ fontFamily: serif, fontWeight: 700, fontSize: '1rem', color: G.dark }}>{order.id}</p>
+              <p style={{ fontFamily: serif, fontWeight: 700, fontSize: '1rem', color: textClr }}>{order.id}</p>
               {order.pin && (
-                <span style={{ fontSize: '0.62rem', fontWeight: 700, background: G.sand, color: G.dark, padding: '0.1rem 0.4rem', borderRadius: '0.35rem', border: `1px solid ${G.border}` }}>
+                <span style={{ fontSize: '0.62rem', fontWeight: 700, background: dark ? 'rgba(200,148,26,0.2)' : G.sand, color: dark ? G.gold : G.dark, padding: '0.1rem 0.4rem', borderRadius: '0.35rem', border: `1px solid ${cardBorder}` }}>
                   PIN: {order.pin}
                 </span>
               )}
             </div>
-            <p style={{ color: G.muted, fontSize: '0.82rem', marginTop: '0.1rem' }}>{order.customer.name}</p>
+            <p style={{ color: mutedClr, fontSize: '0.82rem', marginTop: '0.1rem' }}>{order.customer.name}</p>
           </div>
           <div style={{ textAlign: 'right' }}>
             <p style={{ fontWeight: 700, color: G.gold, fontSize: '1rem' }}>{fmt(order.total)}</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: G.muted,
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: mutedClr,
                           fontSize: '0.72rem', justifyContent: 'flex-end', marginTop: '0.1rem' }}>
               {order.type === 'pickup'
                 ? <><Package size={10} /> Retirada</>
@@ -201,27 +211,27 @@ function OrderCard({ order, onStatusChange, onSendMessage, updating, cardBg, car
         </div>
 
         {/* items */}
-        <div style={{ background: itemBg, borderRadius: '0.75rem', padding: '0.75rem',
+        <div style={{ background: dark ? 'rgba(255,255,255,0.04)' : itemBg, borderRadius: '0.75rem', padding: '0.75rem',
                       marginBottom: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           {order.items.map(i => (
             <div key={i.id} style={{ display: 'flex', justifyContent: 'space-between',
-                                     fontSize: '0.83rem', color: G.dark }}>
+                                     fontSize: '0.83rem', color: textClr }}>
               <span>{i.qty}× {i.name}</span>
-              <span style={{ color: G.muted }}>{fmt(i.price * i.qty)}</span>
+              <span style={{ color: mutedClr }}>{fmt(i.price * i.qty)}</span>
             </div>
           ))}
         </div>
 
         {/* address + notes */}
         {order.type === 'delivery' && order.address && (
-          <p style={{ fontSize: '0.78rem', color: G.muted, marginBottom: '0.5rem',
+          <p style={{ fontSize: '0.78rem', color: mutedClr, marginBottom: '0.5rem',
                       display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
             <MapPin size={11} />{order.address}
           </p>
         )}
         {order.notes && (
-          <p style={{ fontSize: '0.78rem', color: G.muted, marginBottom: '0.5rem',
-                      background: G.sand, padding: '0.4rem 0.6rem', borderRadius: '0.4rem' }}>
+          <p style={{ fontSize: '0.78rem', color: mutedClr, marginBottom: '0.5rem',
+                      background: dark ? 'rgba(255,255,255,0.06)' : G.sand, padding: '0.4rem 0.6rem', borderRadius: '0.4rem' }}>
             Obs: {order.notes}
           </p>
         )}
@@ -699,7 +709,8 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
                                    onStatusChange={updateStatus}
                                    onSendMessage={setMessageOrder}
                                    updating={updating === order.id}
-                                   cardBg={T.card} cardBorder={T.border} itemBg={T.bg} />
+                                   cardBg={T.card} cardBorder={T.border} itemBg={T.bg}
+                                   dark={dark} />
                       ))}
                     </div>
                   </div>
@@ -720,7 +731,8 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
                            onStatusChange={updateStatus}
                            onSendMessage={setMessageOrder}
                            updating={updating === order.id}
-                           cardBg={T.card} cardBorder={T.border} itemBg={T.bg} />
+                           cardBg={T.card} cardBorder={T.border} itemBg={T.bg}
+                           dark={dark} />
               ))}
             </div>
           )

@@ -591,7 +591,7 @@ function CheckoutModal({ cart, total, authToken, onClose, onSuccess }: {
         `Tipo: ${form.type === 'pickup' ? 'Retirada' : `Entrega — ${fullAddress}`}\n\n${summary}\n\n*Total: ${fmt(total)}*` +
         (form.notes ? `\n\nObs: ${form.notes}` : '')
       );
-      window.open(`https://wa.me/5573988083318?text=${wa}`, '_blank');
+      window.open(`https://wa.me/5573981672074?text=${wa}`, '_blank');
       onSuccess(data.id);
     } catch { setErr('Erro ao enviar. Tente novamente.'); }
     finally  { setBusy(false); }
