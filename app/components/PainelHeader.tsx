@@ -15,6 +15,8 @@ import {
   MessageCircle,
   HelpCircle,
 } from 'lucide-react';
+import { useTheme } from '../lib/useTheme';
+import ThemeToggle from './ThemeToggle';
 
 const G = {
   gold:     '#C8941A',
@@ -129,6 +131,7 @@ export default function PainelHeader({
   onRefresh,
   onLogout,
 }: PainelHeaderProps) {
+  const { dark, T, toggle } = useTheme();
   const [pinModal, setPinModal] = useState(false);
 
   function handleLogout() {
@@ -152,8 +155,8 @@ export default function PainelHeader({
   return (
     <>
       <header style={{
-        background: G.dark,
-        borderBottom: `1px solid ${G.border}`,
+        background: dark ? G.dark : '#FFFFFF',
+        borderBottom: `1px solid ${dark ? G.border : '#E8D9BA'}`,
         padding: '0 1rem',
         height: '56px',
         display: 'flex',
@@ -162,6 +165,7 @@ export default function PainelHeader({
         position: 'sticky',
         top: 0,
         zIndex: 40,
+        transition: 'background 0.2s',
       }}>
         {/* Left: Brand + Active page tag */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
@@ -169,7 +173,7 @@ export default function PainelHeader({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/nefertari-logo-golden.png" alt="Nefertari" style={{ height: '32px', width: '32px', objectFit: 'contain' }} />
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-              <span style={{ fontFamily: serif, fontWeight: 700, fontSize: '1.05rem', color: G.text, letterSpacing: '0.01em' }}>
+              <span style={{ fontFamily: serif, fontWeight: 700, fontSize: '1.05rem', color: T.text, letterSpacing: '0.01em' }}>
                 Nefertari
               </span>
               <span style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
@@ -179,7 +183,7 @@ export default function PainelHeader({
           </Link>
 
           {title && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderLeft: `1px solid ${G.border}`, paddingLeft: '0.85rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderLeft: `1px solid ${dark ? G.border : '#E8D9BA'}`, paddingLeft: '0.85rem' }}>
               <span style={{ fontFamily: serif, fontSize: '0.92rem', fontWeight: 600, color: G.gold }}>
                 {title}
               </span>
@@ -191,6 +195,8 @@ export default function PainelHeader({
         {/* Right: Actions & Unified Navigation Icons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
           {rightExtra}
+
+          <ThemeToggle dark={dark} onToggle={toggle} position="static" />
 
           {onRefresh && (
             <button
