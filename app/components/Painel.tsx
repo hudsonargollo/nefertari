@@ -50,6 +50,7 @@ function timeAgo(dateStr: string): string {
 
 // ─── PIN Gate ─────────────────────────────────────────────────────────────────
 function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
+  const { dark, T, toggle } = useTheme();
   const [pin,     setPin]     = useState('');
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState('');
@@ -82,8 +83,12 @@ function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', background: G.dark, display: 'flex',
-                  alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+    <div style={{ minHeight: '100dvh', background: T.bg, display: 'flex',
+                  alignItems: 'center', justifyContent: 'center', padding: '1.5rem', position: 'relative' }}>
+      <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}>
+        <ThemeToggle dark={dark} onToggle={toggle} position="static" />
+      </div>
+
       <div style={{ width: '100%', maxWidth: '360px' }}>
         {/* logo */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -93,14 +98,15 @@ function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
             alt="Nefertari Cozinha Viva"
             style={{ height: '96px', maxWidth: '200px', objectFit: 'contain', margin: '0 auto 1rem', display: 'block' }}
           />
-          <p style={{ color: G.muted, fontSize: '0.75rem', letterSpacing: '0.25em', textTransform: 'uppercase', textAlign: 'center' }}>
+          <p style={{ color: T.muted, fontSize: '0.75rem', letterSpacing: '0.25em', textTransform: 'uppercase', textAlign: 'center' }}>
             Painel da Cozinha
           </p>
         </div>
 
-        <form onSubmit={submit} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '1.5rem',
-                                          border: '1px solid rgba(255,255,255,0.08)', padding: '2rem' }}>
-          <p style={{ color: G.parch, fontFamily: serif, fontSize: '1.2rem', fontWeight: 600,
+        <form onSubmit={submit} style={{ background: T.card, borderRadius: '1.5rem',
+                                          border: `1px solid ${T.border}`, padding: '2rem',
+                                          boxShadow: '0 16px 48px rgba(0,0,0,0.06)' }}>
+          <p style={{ color: T.text, fontFamily: serif, fontSize: '1.2rem', fontWeight: 600,
                       textAlign: 'center', marginBottom: '1.5rem' }}>
             Acesso restrito
           </p>
@@ -110,7 +116,7 @@ function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
             {[0,1,2,3].map(i => (
               <div key={i} style={{
                 width: '0.85rem', height: '0.85rem', borderRadius: '50%', transition: 'all 0.15s',
-                background: pin.length > i ? G.gold : 'rgba(255,255,255,0.15)',
+                background: pin.length > i ? G.gold : (dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)'),
               }} />
             ))}
           </div>
@@ -121,8 +127,8 @@ function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
             value={pin} onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
             placeholder="Digite o PIN"
             style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '0.75rem', boxSizing: 'border-box',
-                     background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)',
-                     color: G.parch, fontSize: '1rem', outline: 'none', textAlign: 'center',
+                     background: T.inputBg, border: `1px solid ${T.border}`,
+                     color: T.text, fontSize: '1rem', outline: 'none', textAlign: 'center',
                      letterSpacing: '0.3em', fontFamily: 'Inter, system-ui, sans-serif', marginBottom: '1rem' }}
           />
 
