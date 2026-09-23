@@ -67,7 +67,7 @@ function ItemModal({ item, categories, onSave, onClose }: {
     return [] as string[];
   };
 
-  const [form, setForm] = useState<MenuItem>({
+  const [form, setForm] = useState<MenuItem>(() => ({
     id:          item?.id          ?? `item-${Date.now()}`,
     category:    item?.category    ?? categories[0]?.id ?? 'burger',
     name:        item?.name        ?? '',
@@ -79,7 +79,7 @@ function ItemModal({ item, categories, onSave, onClose }: {
     images:      initImages(),
     calories:    item?.calories,
     ingredients: item?.ingredients ?? [],
-  });
+  }));
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -105,6 +105,15 @@ function ItemModal({ item, categories, onSave, onClose }: {
   function removeImage(idx: number) {
     setForm(prev => {
       const next = (prev.images ?? []).filter((_, i) => i !== idx);
+      return { ...prev, images: next, imageUrl: next[0] ?? '' };
+    });
+  }
+
+  function setAsCover(idx: number) {
+    setForm(prev => {
+      const list = [...(prev.images ?? [])];
+      const [moved] = list.splice(idx, 1);
+      const next = [moved, ...list];
       return { ...prev, images: next, imageUrl: next[0] ?? '' };
     });
   }
@@ -159,9 +168,15 @@ function ItemModal({ item, categories, onSave, onClose }: {
             <div style={{ display:'flex', flexWrap:'wrap', gap:'0.6rem', marginBottom:'0.75rem' }}>
               {(form.images ?? []).map((src, idx) => (
                 <div key={idx} style={{ position:'relative', flexShrink:0 }}>
-                  <div style={{ width:'72px', height:'72px', borderRadius:'0.65rem',
-                                overflow:'hidden', border:`1px solid ${idx === 0 ? G.gold : G.border}`,
-                                background:'rgba(255,255,255,0.04)' }}>
+                  <div
+                    onClick={() => idx > 0 && setAsCover(idx)}
+                    title={idx === 0 ? 'Foto de Capa' : 'Clique para definir como capa'}
+                    style={{
+                      width:'72px', height:'72px', borderRadius:'0.65rem',
+                      overflow:'hidden', border:`2px solid ${idx === 0 ? G.gold : G.border}`,
+                      background:'rgba(255,255,255,0.04)',
+                      cursor: idx > 0 ? 'pointer' : 'default',
+                    }}>
                     <img src={src} alt={`foto ${idx+1}`}
                          style={{ width:'100%', height:'100%', objectFit:'cover' }} />
                   </div>
@@ -169,6 +184,7 @@ function ItemModal({ item, categories, onSave, onClose }: {
                   <button
                     type="button"
                     onClick={() => removeImage(idx)}
+                    title="Remover foto"
                     style={{
                       position:'absolute', top:'-5px', right:'-5px',
                       width:'18px', height:'18px', borderRadius:'50%',
@@ -177,13 +193,25 @@ function ItemModal({ item, categories, onSave, onClose }: {
                     }}>
                     <X size={9} color="#fff" />
                   </button>
-                  {/* cover badge */}
-                  {idx === 0 && (
+                  {/* cover badge / set cover hint */}
+                  {idx === 0 ? (
                     <span style={{ position:'absolute', bottom:'-6px', left:'50%', transform:'translateX(-50%)',
                                    background:G.gold, color:'#14100C', fontSize:'0.5rem', fontWeight:700,
                                    padding:'1px 5px', borderRadius:'99px', whiteSpace:'nowrap', letterSpacing:'0.05em' }}>
                       CAPA
                     </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setAsCover(idx)}
+                      style={{
+                        position:'absolute', bottom:'-6px', left:'50%', transform:'translateX(-50%)',
+                        background:'rgba(20,16,12,0.9)', color:G.muted, fontSize:'0.48rem', fontWeight:600,
+                        padding:'1px 4px', borderRadius:'99px', whiteSpace:'nowrap', border:`1px solid ${G.border}`,
+                        cursor:'pointer',
+                      }}>
+                      Tornar capa
+                    </button>
                   )}
                 </div>
               ))}
@@ -339,12 +367,12 @@ function CatModal({ cat, nextRoman, onSave, onClose }: {
   onSave:(c:MenuCategory)=>void; onClose:()=>void;
 }) {
   const isNew = !cat?.id;
-  const [form, setForm] = useState<MenuCategory>({
+  const [form, setForm] = useState<MenuCategory>(() => ({
     id:    cat?.id    ?? `cat-${Date.now()}`,
     label: cat?.label ?? '',
     sub:   cat?.sub   ?? '',
     roman: cat?.roman ?? nextRoman,
-  });
+  }));
 
   const inp: React.CSSProperties = {
     width:'100%',padding:'0.7rem 0.9rem',borderRadius:'0.65rem',boxSizing:'border-box',
