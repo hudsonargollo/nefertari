@@ -140,10 +140,6 @@ function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
             {loading ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : 'Entrar'}
           </button>
         </form>
-
-        <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.72rem', textAlign: 'center', marginTop: '1.5rem' }}>
-          PIN padrão: 1234 · Altere em Configurações
-        </p>
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Search, X, Save, Loader2, Users, TrendingUp, Star, Clock } from 'lucide-react';
+import { ArrowLeft, Search, X, Save, Loader2, Users, TrendingUp, Star, Clock, MessageCircle } from 'lucide-react';
 import PainelHeader from './PainelHeader';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
@@ -104,18 +104,40 @@ function CustomerDetail({ customer, onClose, onSave }: {
 
         <div style={{ padding:'1.5rem', display:'flex', flexDirection:'column', gap:'1.5rem' }}>
           {/* avatar + identity */}
-          <div style={{ display:'flex', alignItems:'center', gap:'1rem' }}>
-            <div style={{ width:'3.5rem', height:'3.5rem', borderRadius:'50%', background: color,
-                          display:'flex', alignItems:'center', justifyContent:'center',
-                          fontWeight:700, fontSize:'1.1rem', color:'#fff', flexShrink:0 }}>
-              {initials(customer.name)}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'1rem' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'1rem' }}>
+              <div style={{ width:'3.5rem', height:'3.5rem', borderRadius:'50%', background: color,
+                            display:'flex', alignItems:'center', justifyContent:'center',
+                            fontWeight:700, fontSize:'1.1rem', color:'#fff', flexShrink:0 }}>
+                {initials(customer.name)}
+              </div>
+              <div>
+                <p style={{ fontFamily:serif, fontSize:'1.15rem', fontWeight:700, color:G.text }}>{customer.name}</p>
+                <p style={{ color:G.muted, fontSize:'0.82rem', marginTop:'0.15rem' }}>
+                  {customer.phone.replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, '($1) $2 $3-$4')}
+                </p>
+              </div>
             </div>
-            <div>
-              <p style={{ fontFamily:serif, fontSize:'1.15rem', fontWeight:700, color:G.text }}>{customer.name}</p>
-              <p style={{ color:G.muted, fontSize:'0.82rem', marginTop:'0.15rem' }}>
-                {customer.phone.replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, '($1) $2 $3-$4')}
-              </p>
-            </div>
+
+            {/* Direct WhatsApp Call CTA */}
+            <a
+              href={`https://wa.me/55${customer.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá, ${customer.name}! Aqui é da Nefertari Cozinha Viva 🌿`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Abrir WhatsApp"
+              style={{
+                display:'inline-flex', alignItems:'center', gap:'0.4rem',
+                padding:'0.6rem 1rem', borderRadius:'99px',
+                background:'#25D366', color:'#FFFFFF', textDecoration:'none',
+                fontWeight:700, fontSize:'0.8rem', fontFamily:sans,
+                boxShadow:'0 4px 14px rgba(37,211,102,0.3)', flexShrink:0,
+                transition:'all 0.15s',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.9'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1'; }}
+            >
+              <MessageCircle size={16} /> WhatsApp
+            </a>
           </div>
 
           {/* stats */}
@@ -257,12 +279,31 @@ function CustomerCard({ c, onClick }: { c: Customer; onClick: () => void }) {
         </p>
       </div>
 
-      {/* last order */}
-      <div style={{ textAlign:'right', flexShrink:0 }}>
-        <p style={{ color:G.gold, fontSize:'0.75rem', fontWeight:600 }}>{fmt(c.totalSpent / Math.max(c.orderCount,1))}</p>
-        <p style={{ color:G.muted, fontSize:'0.7rem', marginTop:'0.1rem', display:'flex', alignItems:'center', gap:'0.2rem', justifyContent:'flex-end' }}>
-          <Clock size={10} />{timeAgo(c.lastOrder)}
-        </p>
+      {/* last order + whatsapp */}
+      <div style={{ display:'flex', alignItems:'center', gap:'0.75rem', flexShrink:0 }}>
+        <div style={{ textAlign:'right' }}>
+          <p style={{ color:G.gold, fontSize:'0.75rem', fontWeight:600 }}>{fmt(c.totalSpent / Math.max(c.orderCount,1))}</p>
+          <p style={{ color:G.muted, fontSize:'0.7rem', marginTop:'0.1rem', display:'flex', alignItems:'center', gap:'0.2rem', justifyContent:'flex-end' }}>
+            <Clock size={10} />{timeAgo(c.lastOrder)}
+          </p>
+        </div>
+        <a
+          href={`https://wa.me/55${c.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá, ${c.name}! Aqui é da Nefertari Cozinha Viva 🌿`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={e => e.stopPropagation()}
+          title={`Conversar com ${c.name} no WhatsApp`}
+          style={{
+            padding:'0.45rem', borderRadius:'50%',
+            background:'rgba(37,211,102,0.12)', border:'1px solid rgba(37,211,102,0.3)',
+            color:'#25D366', display:'flex', alignItems:'center', justifyContent:'center',
+            textDecoration:'none', transition:'all 0.15s',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#25D366'; (e.currentTarget as HTMLAnchorElement).style.color = '#fff'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(37,211,102,0.12)'; (e.currentTarget as HTMLAnchorElement).style.color = '#25D366'; }}
+        >
+          <MessageCircle size={15} />
+        </a>
       </div>
     </button>
   );

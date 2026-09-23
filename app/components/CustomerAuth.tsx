@@ -121,9 +121,13 @@ export default function CustomerAuth({ dark, T, authToken, onClose, onAuth, onLo
         {/* Header */}
         <div style={{ padding:'1.25rem 1.5rem', borderBottom:`1px solid ${T.border}`,
                       display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <p style={{ fontFamily:serif, fontSize:'1rem', fontWeight:700, color:T.text }}>
-            {tab==='profile' ? 'Meu perfil' : tab==='login' ? 'Entrar' : 'Começar'}
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/nefertari-logo-golden.png" alt="Nefertari" style={{ height: '28px', objectFit: 'contain' }} />
+            <p style={{ fontFamily:serif, fontSize:'1rem', fontWeight:700, color:T.text, margin: 0 }}>
+              {tab==='profile' ? 'Meu perfil' : tab==='login' ? 'Entrar' : 'Começar'}
+            </p>
+          </div>
           <button onClick={onClose} style={{ background:'none',border:'none',cursor:'pointer' }}><X size={17} color={T.muted}/></button>
         </div>
 

@@ -576,8 +576,10 @@ export default function Home() {
               <div style={{ textAlign: 'left' }}>
                 <p style={{ color: G.muted, fontSize: '0.7rem', textTransform: 'uppercase',
                             letterSpacing: '0.15em', marginBottom: '0.2rem' }}>Instagram</p>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
-                   style={{ color: G.parch, fontSize: '0.9rem', fontWeight: 500, textDecoration: 'none' }}>
+                <a href="https://www.instagram.com/nefertaricozinhaviva/" target="_blank" rel="noopener noreferrer"
+                   style={{ color: G.parch, fontSize: '0.9rem', fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }}
+                   onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = G.gold; }}
+                   onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = G.parch; }}>
                   @nefertaricozinhaviva
                 </a>
               </div>
