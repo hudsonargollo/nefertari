@@ -41,18 +41,25 @@ const menuCategories = [
     color: G.green,
   },
   {
+    glyph: '❋',
+    name: 'Tortas Artesanais',
+    highlight: 'Massa amanteigada',
+    desc: 'Massa amanteigada artesanal, recheios generosos e requeijão cremoso de aipim. Conforto e sabor de verdade.',
+    color: G.terra,
+  },
+  {
     glyph: '△',
     name: 'Acompanhamentos',
     highlight: 'Para completar',
-    desc: 'Batata frita com sal grosso e ervas. Simples, crocante, sem enrolação — do jeito que tem que ser.',
-    color: G.terra,
+    desc: 'Batata frita sequinha e crocante com sal grosso e ervas finas. Porções Média e Grande para compartilhar.',
+    color: G.goldSoft,
   },
   {
     glyph: '◉',
     name: 'Bebidas',
-    highlight: 'Frescas e reais',
-    desc: 'Suco espremido na hora, refrigerante gelado e água. Nada artificial, tudo com intenção.',
-    color: G.goldSoft,
+    highlight: 'Frescas e geladas',
+    desc: 'Refrigerantes em lata e 1L, suco natural espremido na hora e água mineral gelada.',
+    color: G.green,
   },
 ];
 

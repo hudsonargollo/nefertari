@@ -21,42 +21,254 @@ export interface MenuCategory {
   roman:  string;
 }
 
-const MENU_KEY = 'menu:items';
-const CATS_KEY = 'menu:categories';
+const MENU_KEY = 'menu:items:v2';
+const CATS_KEY = 'menu:categories:v2';
 
-const SEED_ITEMS: MenuItem[] = [
-  { id:'bur-01', category:'burger', name:'Pirâmide', price:28, available:true,
-    tags:['vegano'], imageUrl:'/1-piramide.webp',
-    description:'Grão de bico artesanal, húmus, folhas frescas, tomate e molho de ervas ao azeite.' },
-  { id:'bur-02', category:'burger', name:'Kemet',    price:30, available:true,
-    tags:['vegano'], imageUrl:'/2-kermet.webp',
-    description:'Soja texturizada, babaganoush, rúcula, cebola caramelizada e mostarda dijon.' },
-  { id:'bur-03', category:'burger', name:'Nilo',     price:28, available:true,
-    tags:['vegano'], imageUrl:'/3-nilo.webp',
-    description:'Lentilha, cream cheese de castanhas, alface, pepino e molho de iogurte.' },
-  { id:'bur-04', category:'burger', name:'Fênix',    price:32, available:true,
-    tags:[], imageUrl:'/4-fenix.webp',
-    description:'Frango grelhado, crispy de cebola, pimenta roxa e aioli de limão siciliano.' },
-  { id:'wra-01', category:'wrap',   name:'Sálvia',   price:26, available:true,
-    tags:[], imageUrl:'/wrap1-salvia.webp',
-    description:'Frango grelhado, mix de folhas, húmus artesanal, azeite de ervas e limão.' },
-  { id:'wra-02', category:'wrap',   name:'Terra',    price:24, available:true,
-    tags:['vegano'], imageUrl:'/wrap2-terra.webp',
-    description:'Grão de bico assado, legumes no forno, tahine caseiro e rúcula.' },
-  { id:'sid-01', category:'side',   name:'Batata frita', price:12, available:true,
-    tags:['vegano'], imageUrl:'/batatafrita.webp',
-    images:['/batatafrita.webp', '/batatafrita2.webp'],
-    description:'Crocante por fora, macia por dentro. Sal grosso e ervas frescas.' },
-  { id:'dri-01', category:'drink',  name:'Suco natural', price:10, available:true,
-    tags:['vegano'], description:'Laranja, limão ou abacaxi. Espremido na hora, sem açúcar adicionado.' },
-  { id:'dri-02', category:'drink',  name:'Refrigerante', price:6,  available:true,
-    tags:[], description:'Lata gelada.' },
-  { id:'dri-03', category:'drink',  name:'Água',     price:4,  available:true,
-    tags:[], description:'Mineral sem gás 500ml.' },
+export const SEED_ITEMS: MenuItem[] = [
+  // ─── BURGERS ────────────────────────────────────────────────────────
+  {
+    id: 'bur-01',
+    category: 'burger',
+    name: 'Burger Raiz da Terra',
+    price: 26,
+    available: true,
+    tags: ['vegano', 'artesanal'],
+    imageUrl: '/1-piramide.webp',
+    description: 'Pão comum, hambúrguer artesanal de proteína de soja e especiarias, queijo vegano de aipim, molho de castanha de caju, picles de cebola roxa, alface e tomate.',
+    ingredients: [
+      'Pão comum artesanal',
+      'Hambúrguer artesanal com proteína de soja e especiarias',
+      'Queijo vegano de aipim',
+      'Molho de castanha de caju',
+      'Picles de cebola roxa',
+      'Alface e tomate frescos',
+    ],
+  },
+  {
+    id: 'bur-02',
+    category: 'burger',
+    name: 'Burger Grão de Bico',
+    price: 28,
+    available: true,
+    tags: ['vegano', 'artesanal'],
+    imageUrl: '/3-nilo.webp',
+    description: 'Pão brioche leve, hambúrguer artesanal de grão-de-bico, ervas frescas e especiarias, queijo vegano de aipim, abacaxi grelhado, alface e tomate.',
+    ingredients: [
+      'Pão brioche leve',
+      'Hambúrguer artesanal de grão-de-bico com ervas frescas e especiarias',
+      'Queijo vegano de aipim',
+      'Abacaxi grelhado',
+      'Alface e tomate frescos',
+    ],
+  },
+  {
+    id: 'bur-03',
+    category: 'burger',
+    name: 'Burger Brasa',
+    price: 35,
+    available: true,
+    tags: ['artesanal', 'especial'],
+    imageUrl: '/4-fenix.webp',
+    description: 'Pão comum, blend duplo de 80g, bacon crocante, queijo coalho tostado, banana-da-terra grelhada, alface e tomate.',
+    ingredients: [
+      'Pão comum artesanal',
+      'Blend duplo de 80g',
+      'Bacon crocante',
+      'Queijo coalho',
+      'Banana-da-terra grelhada',
+      'Alface e tomate frescos',
+    ],
+  },
+  {
+    id: 'bur-04',
+    category: 'burger',
+    name: 'Burger Nefertari',
+    price: 40,
+    available: true,
+    tags: ['especial da casa', 'artesanal'],
+    imageUrl: '/2-kermet.webp',
+    description: 'Pão comum, blend de 120g, queijo padrão minas, babaganush artesanal com tahine, picles de pepino, alface e tomate.',
+    ingredients: [
+      'Pão comum artesanal',
+      'Blend de 120g',
+      'Queijo padrão minas',
+      'Babaganush com tahine',
+      'Picles de pepino crocante',
+      'Alface e tomate frescos',
+    ],
+  },
+
+  // ─── WRAPS ──────────────────────────────────────────────────────────
+  {
+    id: 'wra-01',
+    category: 'wrap',
+    name: 'Wrap Fungi',
+    price: 22,
+    available: true,
+    tags: ['vegano', 'artesanal'],
+    imageUrl: '/wrap2-terra.webp',
+    description: 'Cogumelos salteados no alho e ervas frescas, queijo vegano de aipim, picles de cebola roxa e alface lisa.',
+    ingredients: [
+      'Pão folha artesanal',
+      'Cogumelos salteados no alho e ervas',
+      'Queijo vegano de aipim',
+      'Picles de cebola roxa',
+      'Alface lisa fresca',
+    ],
+  },
+  {
+    id: 'wra-02',
+    category: 'wrap',
+    name: 'Wrap Levinho',
+    price: 22,
+    available: true,
+    tags: ['artesanal', 'leve'],
+    imageUrl: '/wrap1-salvia.webp',
+    description: 'Frango em tiras grelhado, molho artesanal de mostarda e mel, picles de cebola roxa e alface lisa.',
+    ingredients: [
+      'Pão folha artesanal',
+      'Frango em tiras grelhado',
+      'Molho de mostarda e mel',
+      'Picles de cebola roxa',
+      'Alface lisa fresca',
+    ],
+  },
+
+  // ─── TORTAS ARTESANAIS ─────────────────────────────────────────────
+  {
+    id: 'tor-01',
+    category: 'torta',
+    name: 'Torta Brócolis & Aipim (P)',
+    price: 29,
+    available: true,
+    tags: ['artesanal', 'vegetariano', 'porção P'],
+    description: 'Tamanho Individual (P). Massa amanteigada artesanal, brócolis temperado e requeijão cremoso de aipim.',
+    ingredients: [
+      'Massa amanteigada artesanal',
+      'Brócolis temperado',
+      'Requeijão cremoso de aipim',
+    ],
+  },
+  {
+    id: 'tor-02',
+    category: 'torta',
+    name: 'Torta Brócolis & Aipim (M)',
+    price: 49,
+    available: true,
+    tags: ['artesanal', 'vegetariano', 'porção M'],
+    description: 'Tamanho Médio (M / Compartilhar). Massa amanteigada artesanal, brócolis temperado e requeijão cremoso de aipim.',
+    ingredients: [
+      'Massa amanteigada artesanal',
+      'Brócolis temperado',
+      'Requeijão cremoso de aipim',
+    ],
+  },
+  {
+    id: 'tor-03',
+    category: 'torta',
+    name: 'Torta Carne Seca & Banana-da-Terra (P)',
+    price: 39,
+    available: true,
+    tags: ['artesanal', 'especial', 'porção P'],
+    description: 'Tamanho Individual (P). Massa amanteigada artesanal, carne seca desfiada, banana-da-terra e requeijão cremoso.',
+    ingredients: [
+      'Massa amanteigada artesanal',
+      'Carne seca desfiada',
+      'Banana-da-terra',
+      'Requeijão cremoso',
+    ],
+  },
+  {
+    id: 'tor-04',
+    category: 'torta',
+    name: 'Torta Carne Seca & Banana-da-Terra (M)',
+    price: 65,
+    available: true,
+    tags: ['artesanal', 'especial', 'porção M'],
+    description: 'Tamanho Médio (M / Compartilhar). Massa amanteigada artesanal, carne seca desfiada, banana-da-terra e requeijão cremoso.',
+    ingredients: [
+      'Massa amanteigada artesanal',
+      'Carne seca desfiada',
+      'Banana-da-terra',
+      'Requeijão cremoso',
+    ],
+  },
+
+  // ─── ACOMPANHAMENTOS / BATATA FRITA ────────────────────────────────
+  {
+    id: 'sid-01',
+    category: 'side',
+    name: 'Batata Frita (Média)',
+    price: 20,
+    available: true,
+    tags: ['vegano', 'porção M'],
+    imageUrl: '/batatafrita.webp',
+    images: ['/batatafrita.webp', '/batatafrita2.webp'],
+    description: 'Porção Média (M). Crocante por fora, macia por dentro. Sal grosso e ervas frescas.',
+    ingredients: ['Batatas selecionadas', 'Sal grosso', 'Ervas frescas'],
+  },
+  {
+    id: 'sid-02',
+    category: 'side',
+    name: 'Batata Frita (Grande)',
+    price: 30,
+    available: true,
+    tags: ['vegano', 'porção G'],
+    imageUrl: '/batatafrita2.webp',
+    images: ['/batatafrita2.webp', '/batatafrita.webp'],
+    description: 'Porção Grande (G). Porção generosa para compartilhar. Batatas sequinhas e crocantes com toque de ervas.',
+    ingredients: ['Batatas selecionadas', 'Sal grosso', 'Ervas frescas'],
+  },
+
+  // ─── BEBIDAS ───────────────────────────────────────────────────────
+  {
+    id: 'dri-01',
+    category: 'drink',
+    name: 'Refrigerante 1L',
+    price: 10,
+    available: true,
+    tags: ['1 litro', 'gelado'],
+    description: 'Garrafa 1 Litro gelada. Opções: Coca-Cola ou Guaraná Antarctica.',
+  },
+  {
+    id: 'dri-02',
+    category: 'drink',
+    name: 'Refrigerante Lata',
+    price: 7,
+    available: true,
+    tags: ['lata 350ml', 'gelado'],
+    description: 'Lata 350ml gelada. Opções: Coca-Cola ou Guaraná Antarctica.',
+  },
+  {
+    id: 'dri-03',
+    category: 'drink',
+    name: 'Suco Natural',
+    price: 10,
+    available: true,
+    tags: ['natural', 'sem açúcar'],
+    imageUrl: '/suco.webp',
+    description: 'Laranja, limão ou abacaxi. Espremido na hora, sem açúcar adicionado.',
+  },
+  {
+    id: 'dri-04',
+    category: 'drink',
+    name: 'Água Mineral',
+    price: 4,
+    available: true,
+    tags: ['500ml', 'gelada'],
+    description: 'Mineral 500ml gelada (sem gás ou com gás).',
+  },
+];
+
+export const SEED_CATS: MenuCategory[] = [
+  { id:'burger', label:'Pratos Principais',  sub:'Hambúrgueres artesanais',          roman:'I'   },
+  { id:'wrap',   label:'Wraps',              sub:'Leves e intencionais',             roman:'II'  },
+  { id:'torta',  label:'Tortas Artesanais',  sub:'Massa amanteigada e recheios generosos', roman:'III' },
+  { id:'side',   label:'Acompanhamentos',    sub:'Para completar',                   roman:'IV'  },
+  { id:'drink',  label:'Bebidas',            sub:'Frescas e geladas',                roman:'V'   },
 ];
 
 // Merge seed photos into existing KV items that don't yet have imageUrl set.
-// This lets the seed apply retroactively without wiping admin edits.
 function mergePhotos(stored: MenuItem[]): MenuItem[] {
   const photoMap = new Map(SEED_ITEMS.map(s => [s.id, { imageUrl: s.imageUrl, images: s.images }]));
   return stored.map(item => {
@@ -67,13 +279,6 @@ function mergePhotos(stored: MenuItem[]): MenuItem[] {
     return item;
   });
 }
-
-const SEED_CATS: MenuCategory[] = [
-  { id:'burger', label:'Pratos Principais',  sub:'Hambúrgueres artesanais',  roman:'I'   },
-  { id:'wrap',   label:'Wraps',              sub:'Leves e intencionais',      roman:'II'  },
-  { id:'side',   label:'Acompanhamentos',    sub:'Para completar',            roman:'III' },
-  { id:'drink',  label:'Bebidas',            sub:'Frescas e simples',         roman:'IV'  },
-];
 
 // GET — returns { items, categories }
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
