@@ -625,18 +625,15 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
         onRefresh={fetchOrders}
         onLogout={onLogout}
         rightExtra={
-          <>
-            {newOrders > 0 && (
-              <span onClick={() => { setNewOrders(0); setTab('active'); }} style={{
-                background: G.gold, color: G.dark, borderRadius: '99px',
-                padding: '0.25rem 0.6rem', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer',
-                animation: 'pulse 1.5s ease-in-out infinite',
-              }}>
-                +{newOrders} novo{newOrders > 1 ? 's' : ''}
-              </span>
-            )}
-            <ThemeToggle dark={dark} onToggle={toggle} position="static" />
-          </>
+          newOrders > 0 ? (
+            <span onClick={() => { setNewOrders(0); setTab('active'); }} style={{
+              background: G.gold, color: G.dark, borderRadius: '99px',
+              padding: '0.25rem 0.6rem', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer',
+              animation: 'pulse 1.5s ease-in-out infinite',
+            }}>
+              +{newOrders} novo{newOrders > 1 ? 's' : ''}
+            </span>
+          ) : undefined
         }
       />
 

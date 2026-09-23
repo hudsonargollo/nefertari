@@ -4,16 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Search, X, Save, Loader2, Users, TrendingUp, Star, Clock, MessageCircle } from 'lucide-react';
 import PainelHeader from './PainelHeader';
+import { useTheme } from '../lib/useTheme';
 
-// ─── Tokens ───────────────────────────────────────────────────────────────────
-const G = {
-  gold: '#C8941A', goldSoft: '#E6B84A',
-  green: '#6B8C3E', terra: '#8B4030',
-  dark: '#14100C', card: '#1A1208', card2: '#211808',
-  parch: '#FAF5E8', muted: '#7A6A54',
-  text: '#E8D9BA', border: 'rgba(200,148,26,0.18)',
-  bg: '#0E0C08',
-};
 const serif = 'Playfair Display, Georgia, serif';
 const sans  = 'Inter, system-ui, sans-serif';
 const fmt   = (n: number) => `R$ ${n.toFixed(2).replace('.', ',')}`;
@@ -33,17 +25,16 @@ interface Customer {
 
 // ─── Tag options ──────────────────────────────────────────────────────────────
 const TAG_OPTIONS = [
-  { value: 'fiel',              label: 'Cliente fiel',      color: G.gold   },
-  { value: 'vegano',            label: 'Vegano',            color: G.green  },
-  { value: 'vegetariano',       label: 'Vegetariano',       color: G.green  },
-  { value: 'sem-gluten',        label: 'Sem glúten',        color: '#8B6A2E'},
-  { value: 'restrição',         label: 'Restrição alim.',   color: G.terra  },
-  { value: 'delivery',          label: 'Prefere entrega',   color: '#5B6A8B'},
-  { value: 'retirada',          label: 'Prefere retirada',  color: '#6B5B8B'},
-  { value: 'indicador',         label: 'Indicador',         color: G.goldSoft},
+  { value: 'fiel',              label: 'Cliente fiel',      color: '#C8941A' },
+  { value: 'vegano',            label: 'Vegano',            color: '#6B8C3E' },
+  { value: 'vegetariano',       label: 'Vegetariano',       color: '#6B8C3E' },
+  { value: 'sem-gluten',        label: 'Sem glúten',        color: '#8B6A2E' },
+  { value: 'restrição',         label: 'Restrição alim.',   color: '#8B4030' },
+  { value: 'delivery',          label: 'Prefere entrega',   color: '#5B6A8B' },
+  { value: 'retirada',          label: 'Prefere retirada',  color: '#6B5B8B' },
+  { value: 'indicador',         label: 'Indicador',         color: '#E6B84A' },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 function timeAgo(dateStr: string) {
   const mins = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
   if (mins < 60)   return `${mins}min atrás`;
@@ -56,7 +47,7 @@ function initials(name: string) {
 }
 
 function avatarColor(phone: string) {
-  const colors = [G.gold, G.green, G.terra, '#5B6A8B', '#8B6A2E', '#6B5B8B'];
+  const colors = ['#C8941A', '#6B8C3E', '#8B4030', '#5B6A8B', '#8B6A2E', '#6B5B8B'];
   const sum    = phone.split('').reduce((a,c) => a + c.charCodeAt(0), 0);
   return colors[sum % colors.length];
 }
@@ -67,6 +58,12 @@ function CustomerDetail({ customer, onClose, onSave }: {
   onClose: () => void;
   onSave:  (phone: string, notes: string, tags: string[]) => Promise<void>;
 }) {
+  const { dark, T } = useTheme();
+  const G = {
+    gold: '#C8941A', green: '#6B8C3E', terra: '#8B4030',
+    dark: '#14100C', card: T.card, card2: dark ? '#211808' : '#F5E6C8',
+    text: T.text, muted: T.muted, border: T.border, bg: T.bg,
+  };
   const [notes, setNotes] = useState(customer.notes ?? '');
   const [tags,  setTags]  = useState<string[]>(customer.tags ?? []);
   const [saving, setSaving] = useState(false);
@@ -232,6 +229,12 @@ function CustomerDetail({ customer, onClose, onSave }: {
 
 // ─── Customer Card ────────────────────────────────────────────────────────────
 function CustomerCard({ c, onClick }: { c: Customer; onClick: () => void }) {
+  const { dark, T } = useTheme();
+  const G = {
+    gold: '#C8941A', green: '#6B8C3E', terra: '#8B4030',
+    dark: '#14100C', card: T.card, card2: dark ? '#211808' : '#F5E6C8',
+    text: T.text, muted: T.muted, border: T.border, bg: T.bg,
+  };
   const color = avatarColor(c.phone);
   const isVip = c.orderCount >= 3;
 
@@ -311,6 +314,12 @@ function CustomerCard({ c, onClick }: { c: Customer; onClick: () => void }) {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function PainelClientes() {
+  const { dark, T } = useTheme();
+  const G = {
+    gold: '#C8941A', green: '#6B8C3E', terra: '#8B4030',
+    dark: '#14100C', card: T.card, card2: dark ? '#211808' : '#F5E6C8',
+    text: T.text, muted: T.muted, border: T.border, bg: T.bg,
+  };
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading,   setLoading]   = useState(true);
   const [query,     setQuery]     = useState('');

@@ -4,14 +4,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Pencil, Trash2, X, Save, Loader2, ToggleLeft, ToggleRight, Image as ImageIcon } from 'lucide-react';
 import PainelHeader from './PainelHeader';
+import { useTheme } from '../lib/useTheme';
 
-// ─── Tokens ───────────────────────────────────────────────────────────────────
-const G = {
-  gold:'#C8941A', green:'#6B8C3E', terra:'#8B4030',
-  dark:'#14100C', card:'#1A1208', card2:'#211808',
-  text:'#E8D9BA', muted:'#7A6A54', border:'rgba(200,148,26,0.18)',
-  bg:'#0E0C08',
-};
 const serif = 'Playfair Display, Georgia, serif';
 const sans  = 'Inter, system-ui, sans-serif';
 const fmt   = (n: number) => `R$ ${n.toFixed(2).replace('.', ',')}`;
@@ -59,6 +53,12 @@ function ItemModal({ item, categories, onSave, onClose }: {
   onSave: (i: MenuItem) => void;
   onClose: () => void;
 }) {
+  const { dark, T } = useTheme();
+  const G = {
+    gold:'#C8941A', green:'#6B8C3E', terra:'#8B4030',
+    dark:'#14100C', card: T.card, card2: dark ? '#211808' : '#F5E6C8',
+    text: T.text, muted: T.muted, border: T.border, bg: T.bg,
+  };
   const isNew = !item?.id;
 
   // Initialise images[] from existing data
@@ -367,6 +367,12 @@ function CatModal({ cat, nextRoman, onSave, onClose }: {
   cat: Partial<MenuCategory>|null; nextRoman:string;
   onSave:(c:MenuCategory)=>void; onClose:()=>void;
 }) {
+  const { dark, T } = useTheme();
+  const G = {
+    gold:'#C8941A', green:'#6B8C3E', terra:'#8B4030',
+    dark:'#14100C', card: T.card, card2: dark ? '#211808' : '#F5E6C8',
+    text: T.text, muted: T.muted, border: T.border, bg: T.bg,
+  };
   const isNew = !cat?.id;
   const [form, setForm] = useState<MenuCategory>(() => ({
     id:    cat?.id    ?? `cat-${Date.now()}`,
@@ -416,6 +422,12 @@ function CatModal({ cat, nextRoman, onSave, onClose }: {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function PainelCardapio() {
+  const { dark, T } = useTheme();
+  const G = {
+    gold:'#C8941A', green:'#6B8C3E', terra:'#8B4030',
+    dark:'#14100C', card: T.card, card2: dark ? '#211808' : '#F5E6C8',
+    text: T.text, muted: T.muted, border: T.border, bg: T.bg,
+  };
   const [items,    setItems]    = useState<MenuItem[]>([]);
   const [cats,     setCats]     = useState<MenuCategory[]>([]);
   const [loading,  setLoading]  = useState(true);

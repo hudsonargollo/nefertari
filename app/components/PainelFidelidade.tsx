@@ -3,8 +3,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Pencil, Trash2, X, Loader2, CheckCircle2, MessageSquare, ExternalLink } from 'lucide-react';
 import PainelHeader from './PainelHeader';
+import { useTheme } from '../lib/useTheme';
 
-const G = { gold:'#C8941A', green:'#6B8C3E', terra:'#8B4030', dark:'#14100C', card:'#1A1208', card2:'#211808', text:'#E8D9BA', muted:'#7A6A54', border:'rgba(200,148,26,0.18)', bg:'#0E0C08' };
 const serif = 'Playfair Display, Georgia, serif';
 const sans  = 'Inter, system-ui, sans-serif';
 
@@ -17,6 +17,12 @@ const TRIGGER_LABELS: Record<string, string> = {
 
 // ─── Reward Modal ────────────────────────────────────────────────────────────
 function RewardModal({ reward, onSave, onClose }: { reward:Partial<Reward>|null; onSave:(r:Partial<Reward>)=>void; onClose:()=>void }) {
+  const { dark, T } = useTheme();
+  const G = {
+    gold:'#C8941A', green:'#6B8C3E', terra:'#8B4030',
+    dark:'#14100C', card: T.card, card2: dark ? '#211808' : '#F5E6C8',
+    text: T.text, muted: T.muted, border: T.border, bg: T.bg,
+  };
   const [form, setForm] = useState({ seasonName:reward?.seasonName??'', recipeTitle:reward?.recipeTitle??'', recipeDescription:reward?.recipeDescription??'', imageUrl:reward?.imageUrl??'', isActive:reward?.isActive??false });
   const inp: React.CSSProperties = { width:'100%', padding:'0.7rem 0.9rem', borderRadius:'0.65rem', boxSizing:'border-box', background:'rgba(255,255,255,0.05)', border:`1px solid ${G.border}`, color:G.text, fontSize:'0.88rem', fontFamily:sans, outline:'none' };
   const lbl: React.CSSProperties = { display:'block', color:G.muted, fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:'0.35rem' };
@@ -50,6 +56,12 @@ function RewardModal({ reward, onSave, onClose }: { reward:Partial<Reward>|null;
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 export default function PainelFidelidade() {
+  const { dark, T } = useTheme();
+  const G = {
+    gold:'#C8941A', green:'#6B8C3E', terra:'#8B4030',
+    dark:'#14100C', card: T.card, card2: dark ? '#211808' : '#F5E6C8',
+    text: T.text, muted: T.muted, border: T.border, bg: T.bg,
+  };
   const [rewards,  setRewards]  = useState<Reward[]>([]);
   const [notifs,   setNotifs]   = useState<Notification[]>([]);
   const [loading,  setLoading]  = useState(true);
