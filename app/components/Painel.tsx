@@ -84,10 +84,14 @@ function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
                   alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
       <div style={{ width: '100%', maxWidth: '360px' }}>
         {/* logo */}
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/nefertari-logo-v2.png" alt="Nefertari" style={{ height: '80px', objectFit: 'contain', marginBottom: '1rem' }} />
-          <p style={{ color: G.muted, fontSize: '0.75rem', letterSpacing: '0.25em', textTransform: 'uppercase' }}>
+          <img
+            src="/nefertari-logo-golden.png"
+            alt="Nefertari Cozinha Viva"
+            style={{ height: '96px', maxWidth: '200px', objectFit: 'contain', margin: '0 auto 1rem', display: 'block' }}
+          />
+          <p style={{ color: G.muted, fontSize: '0.75rem', letterSpacing: '0.25em', textTransform: 'uppercase', textAlign: 'center' }}>
             Painel da Cozinha
           </p>
         </div>
