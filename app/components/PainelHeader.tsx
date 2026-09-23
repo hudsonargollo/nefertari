@@ -161,13 +161,17 @@ export default function PainelHeader({
       }}>
         {/* Left: Brand + Active page tag */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <Link href="/painel" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-            <span style={{ fontFamily: serif, fontWeight: 700, fontSize: '1.05rem', color: G.text, letterSpacing: '0.01em' }}>
-              Nefertari
-            </span>
-            <span style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
-              Painel da Cozinha
-            </span>
+          <Link href="/painel" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/nefertari-logo-golden.png" alt="Nefertari" style={{ height: '32px', width: '32px', objectFit: 'contain' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+              <span style={{ fontFamily: serif, fontWeight: 700, fontSize: '1.05rem', color: G.text, letterSpacing: '0.01em' }}>
+                Nefertari
+              </span>
+              <span style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
+                Painel da Cozinha
+              </span>
+            </div>
           </Link>
 
           {title && (

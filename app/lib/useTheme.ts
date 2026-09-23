@@ -41,17 +41,17 @@ export const LIGHT: ThemeTokens = {
   terra:       '#8B4030',
   border:      '#E8D9BA',
   borderStrong:'#D4B896',
-  logo:        '/nefertari-logo-v2.png',
+  logo:        '/nefertari-logo-golden.png',
   inputBg:     '#FFFFFF',
 };
 
 export function useTheme() {
-  const [dark, setDark] = useState(true); // dark by default
+  const [dark, setDark] = useState(false); // light by default
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem('nef-theme');
-      if (stored === 'light') setDark(false);
+      if (stored === 'dark') setDark(true);
     } catch { /* SSR / no localStorage */ }
   }, []);
 
