@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Pencil, Trash2, X, Save, Loader2, ToggleLeft, ToggleRight, Image as ImageIcon } from 'lucide-react';
+import PainelHeader from './PainelHeader';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 const G = {
@@ -505,20 +506,17 @@ export default function PainelCardapio() {
     <div style={{ minHeight:'100dvh',background:G.bg,fontFamily:sans,color:G.text }}>
 
       {/* header */}
-      <header style={{ background:G.dark,borderBottom:`1px solid ${G.border}`,
-                       padding:'0 1.25rem',height:'56px',display:'flex',
-                       alignItems:'center',justifyContent:'space-between',
-                       position:'sticky',top:0,zIndex:40 }}>
-        <Link href="/painel" style={{ display:'inline-flex',alignItems:'center',gap:'0.5rem',
-                                      textDecoration:'none',color:G.muted,fontSize:'0.85rem' }}>
-          <ArrowLeft size={15}/> Painel
-        </Link>
-        <span style={{ fontFamily:serif,fontSize:'0.95rem',fontWeight:700,color:G.text }}>Cardápio</span>
-        <div style={{ display:'flex',alignItems:'center',gap:'0.5rem' }}>
-          {saved && <span style={{ color:G.green,fontSize:'0.78rem',fontWeight:600 }}>✓ Salvo</span>}
-          {saving && <Loader2 size={14} color={G.gold} style={{ animation:'spin 1s linear infinite' }}/>}
-        </div>
-      </header>
+      <PainelHeader
+        current="cardapio"
+        title="Cardápio"
+        onRefresh={load}
+        rightExtra={
+          <div style={{ display:'flex',alignItems:'center',gap:'0.4rem' }}>
+            {saved && <span style={{ color:G.green,fontSize:'0.75rem',fontWeight:700,background:`${G.green}18`,padding:'0.2rem 0.6rem',borderRadius:'99px',border:`1px solid ${G.green}40` }}>✓ Salvo</span>}
+            {saving && <Loader2 size={15} color={G.gold} style={{ animation:'spin 1s linear infinite' }}/>}
+          </div>
+        }
+      />
 
       <div style={{ maxWidth:'800px',margin:'0 auto',padding:'1.5rem 1.25rem' }}>
 

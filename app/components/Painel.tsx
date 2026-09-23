@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { LogOut, RefreshCw, Clock, MapPin, Package, CheckCircle2, Loader2, ChevronRight, Settings, X, Users } from 'lucide-react';
 import { useTheme } from '../lib/useTheme';
 import ThemeToggle from './ThemeToggle';
+import PainelHeader from './PainelHeader';
 
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const G = {
@@ -409,54 +410,25 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
     <div style={{ minHeight: '100dvh', background: T.bg, fontFamily: 'Inter, system-ui, sans-serif', transition: 'background 0.3s' }}>
 
       {/* ── Top bar ─── */}
-      <header style={{ background: dark ? G.dark : T.card, padding: '0 1.25rem', height: '56px',
-                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                       position: 'sticky', top: 0, zIndex: 40,
-                       borderBottom: `1px solid ${T.border}` }}>
-        {/* Text logo — no image */}
-        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-          <span style={{ fontFamily: serif, fontWeight: 700, fontSize: '1rem', color: T.text, letterSpacing: '0.01em' }}>
-            Nefertari
-          </span>
-          <span style={{ color: G.gold, fontSize: '0.55rem', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
-            Cozinha
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {newOrders > 0 && (
-            <span onClick={() => { setNewOrders(0); setTab('active'); }} style={{
-              background: G.gold, color: G.dark, borderRadius: '99px',
-              padding: '0.25rem 0.6rem', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer',
-              animation: 'pulse 1.5s ease-in-out infinite',
-            }}>
-              +{newOrders} novo{newOrders > 1 ? 's' : ''}
-            </span>
-          )}
-          <button onClick={fetchOrders} style={{ background: 'none', border: 'none', cursor: 'pointer',
-                                                  color: T.muted, padding: '6px', display:'flex', alignItems:'center' }}>
-            <RefreshCw size={16} />
-          </button>
-          <ThemeToggle dark={dark} onToggle={toggle} position="static" />
-          <Link href="/painel/cardapio" style={{ color: T.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }} title="Gerenciar cardápio">
-            <span style={{ fontSize: '0.75rem', fontWeight: 700 }}>◈</span>
-          </Link>
-          <Link href="/painel/fidelidade" style={{ color: T.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }} title="Programa de fidelidade">
-            <span style={{ fontSize: '0.85rem' }}>🎁</span>
-          </Link>
-          <Link href="/painel/clientes" style={{ color: T.muted, padding: '6px', display: 'inline-flex', alignItems: 'center' }}>
-            <Users size={16} />
-          </Link>
-          <button onClick={() => setPinModal(true)} style={{ background: 'none', border: 'none',
-                                                              cursor: 'pointer', color: T.muted, padding: '6px' }}>
-            <Settings size={16} />
-          </button>
-          <button onClick={onLogout} style={{ background: 'none', border: 'none', cursor: 'pointer',
-                                              color: T.muted, padding: '6px' }}>
-            <LogOut size={16} />
-          </button>
-        </div>
-      </header>
+      <PainelHeader
+        current="pedidos"
+        onRefresh={fetchOrders}
+        onLogout={onLogout}
+        rightExtra={
+          <>
+            {newOrders > 0 && (
+              <span onClick={() => { setNewOrders(0); setTab('active'); }} style={{
+                background: G.gold, color: G.dark, borderRadius: '99px',
+                padding: '0.25rem 0.6rem', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer',
+                animation: 'pulse 1.5s ease-in-out infinite',
+              }}>
+                +{newOrders} novo{newOrders > 1 ? 's' : ''}
+              </span>
+            )}
+            <ThemeToggle dark={dark} onToggle={toggle} position="static" />
+          </>
+        }
+      />
 
       {/* ── Stats bar ─── */}
       <div style={{ background: T.card, borderBottom: `1px solid ${T.border}`,

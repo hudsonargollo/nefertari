@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Search, X, Save, Loader2, Users, TrendingUp, Star, Clock } from 'lucide-react';
+import PainelHeader from './PainelHeader';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 const G = {
@@ -331,19 +332,16 @@ export default function PainelClientes() {
     <div style={{ minHeight:'100dvh', background:G.bg, fontFamily:sans, color:G.text }}>
 
       {/* header */}
-      <header style={{ background:G.dark, borderBottom:`1px solid ${G.border}`,
-                       padding:'0 1.25rem', height:'56px',
-                       display:'flex', alignItems:'center', justifyContent:'space-between',
-                       position:'sticky', top:0, zIndex:40 }}>
-        <Link href="/painel" style={{ display:'inline-flex', alignItems:'center', gap:'0.5rem',
-                                      textDecoration:'none', color:G.muted, fontSize:'0.85rem' }}>
-          <ArrowLeft size={15}/> Painel
-        </Link>
-        <span style={{ fontFamily:serif, fontSize:'0.95rem', fontWeight:700, color:G.text }}>
-          Clientes
-        </span>
-        <span style={{ color:G.muted, fontSize:'0.8rem' }}>{customers.length} cadastrado{customers.length !== 1 ? 's' : ''}</span>
-      </header>
+      <PainelHeader
+        current="clientes"
+        title="Clientes"
+        badge={
+          <span style={{ color:G.muted, fontSize:'0.75rem', background:'rgba(255,255,255,0.06)', padding:'0.15rem 0.5rem', borderRadius:'99px', border:`1px solid ${G.border}` }}>
+            {customers.length}
+          </span>
+        }
+        onRefresh={load}
+      />
 
       <div style={{ maxWidth:'720px', margin:'0 auto', padding:'1.5rem 1.25rem' }}>
 

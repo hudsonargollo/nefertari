@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Pencil, Trash2, X, Loader2, CheckCircle2, MessageSquare, ExternalLink } from 'lucide-react';
+import PainelHeader from './PainelHeader';
 
 const G = { gold:'#C8941A', green:'#6B8C3E', terra:'#8B4030', dark:'#14100C', card:'#1A1208', card2:'#211808', text:'#E8D9BA', muted:'#7A6A54', border:'rgba(200,148,26,0.18)', bg:'#0E0C08' };
 const serif = 'Playfair Display, Georgia, serif';
@@ -100,15 +101,16 @@ export default function PainelFidelidade() {
 
   return (
     <div style={{ minHeight:'100dvh',background:G.bg,fontFamily:sans,color:G.text }}>
-      <header style={{ background:G.dark,borderBottom:`1px solid ${G.border}`,padding:'0 1.25rem',height:'56px',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:40 }}>
-        <Link href="/painel" style={{ display:'inline-flex',alignItems:'center',gap:'0.5rem',textDecoration:'none',color:G.muted,fontSize:'0.85rem' }}>
-          <ArrowLeft size={15}/> Painel
-        </Link>
-        <span style={{ fontFamily:serif,fontSize:'0.95rem',fontWeight:700,color:G.text }}>Fidelidade</span>
-        <button onClick={() => setEditR({})} style={{ display:'flex',alignItems:'center',gap:'0.4rem',padding:'0.5rem 0.9rem',borderRadius:'99px',background:G.gold,color:G.dark,border:'none',cursor:'pointer',fontFamily:sans,fontWeight:600,fontSize:'0.8rem' }}>
-          <Plus size={13}/> Nova receita
-        </button>
-      </header>
+      <PainelHeader
+        current="fidelidade"
+        title="Fidelidade"
+        onRefresh={load}
+        rightExtra={
+          <button onClick={() => setEditR({})} style={{ display:'flex',alignItems:'center',gap:'0.4rem',padding:'0.45rem 0.85rem',borderRadius:'99px',background:G.gold,color:G.dark,border:'none',cursor:'pointer',fontFamily:sans,fontWeight:700,fontSize:'0.78rem' }}>
+            <Plus size={14}/> Nova receita
+          </button>
+        }
+      />
 
       <div style={{ maxWidth:'800px',margin:'0 auto',padding:'1.5rem 1.25rem', display:'flex', flexDirection:'column', gap:'2rem' }}>
 
