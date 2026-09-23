@@ -75,6 +75,7 @@ export default function Documentation() {
     { id: 'faq',        label: 'Dúvidas & FAQ',        icon: HelpCircle,   desc: 'Perguntas frequentes e resolução de problemas' },
   ] as const;
 
+  // Trigger deployment webhook commit
   return (
     <div style={{ minHeight: '100dvh', background: dark ? G.dark : T.bg, color: T.text, fontFamily: sans, transition: 'background 0.3s' }}>
       
