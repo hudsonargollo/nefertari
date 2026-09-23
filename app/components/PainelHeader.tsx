@@ -12,6 +12,7 @@ import {
   X,
   CheckCircle2,
   RefreshCw,
+  MessageCircle,
 } from 'lucide-react';
 
 const G = {
@@ -111,7 +112,7 @@ function ChangePinModal({ onClose }: { onClose: () => void }) {
 
 // ─── Header Component ────────────────────────────────────────────────────────
 export interface PainelHeaderProps {
-  current: 'pedidos' | 'cardapio' | 'fidelidade' | 'clientes';
+  current: 'pedidos' | 'cardapio' | 'fidelidade' | 'clientes' | 'whatsapp';
   title?: string;
   badge?: React.ReactNode;
   rightExtra?: React.ReactNode;
@@ -143,6 +144,7 @@ export default function PainelHeader({
     { id: 'cardapio',   href: '/painel/cardapio',   label: 'Cardápio',   icon: BookOpen    },
     { id: 'fidelidade', href: '/painel/fidelidade', label: 'Fidelidade', icon: Gift        },
     { id: 'clientes',   href: '/painel/clientes',   label: 'Clientes',   icon: Users       },
+    { id: 'whatsapp',   href: '/painel/whatsapp',   label: 'WhatsApp',   icon: MessageCircle },
   ] as const;
 
   return (

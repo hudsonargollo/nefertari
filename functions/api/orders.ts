@@ -1,4 +1,5 @@
 import { queueNotification } from './auth.js';
+import { sendWhatsAppMessage, generateBrandMessage, getWhatsAppConfig } from '../lib/whatsapp';
 
 interface Env { NEFERTARI_KV: KVNamespace; }
 
@@ -31,6 +32,7 @@ export interface Order {
   total:      number;
   notes?:     string;
   status:     'received' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
+  pin?:       string;
   created_at: string;
   updated_at: string;
 }
@@ -45,6 +47,12 @@ function genId(): string {
   const date = `${String(now.getDate()).padStart(2,'0')}${String(now.getMonth()+1).padStart(2,'0')}`;
   const rand = crypto.randomUUID().slice(0, 4).toUpperCase();
   return `NEF-${date}-${rand}`;
+}
+
+async function hashPin(pin: string): Promise<string> {
+  const data = new TextEncoder().encode(pin);
+  const buf  = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
 // GET — list all orders (kitchen panel)
@@ -69,7 +77,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const now  = new Date().toISOString();
     const id   = genId();
 
-    const order: Order = { ...body, id, status: 'received', created_at: now, updated_at: now };
+    // Generate random 4-digit PIN for order & customer account
+    const randomPin = Math.floor(1000 + Math.random() * 9000).toString();
+
+    const order: Order = {
+      ...body,
+      id,
+      pin: randomPin,
+      status: 'received',
+      created_at: now,
+      updated_at: now,
+    };
 
     // Save order
     await env.NEFERTARI_KV.put(orderKey(id), JSON.stringify(order));
@@ -132,6 +150,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       }
     }
 
+    // Set pinHash if not yet set
+    const pinHashToSave = existing?.pinHash ?? (await hashPin(randomPin));
+
     const updated: CRMCustomer = {
       phone,
       name:           body.customer.name,
@@ -142,7 +163,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       orders:         [id, ...(existing?.orders ?? [])].slice(0, 50),
       notes:          existing?.notes      ?? '',
       tags:           existing?.tags       ?? [],
-      pinHash:        existing?.pinHash,
+      pinHash:        pinHashToSave,
       loyaltyPoints:  newPoints,
       totalCycles:    newCycles,
       pendingReward:  newPending,
@@ -157,7 +178,24 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       env.NEFERTARI_KV.put(crmIdxKey,  JSON.stringify(newCrmIdx)),
     ]);
 
-    return Response.json({ ok: true, id }, { headers: cors() });
+    // ── Dispatch automatic WhatsApp confirmation message ─────────────────────
+    try {
+      const config = await getWhatsAppConfig(env);
+      if (config.autoNotify) {
+        const message = generateBrandMessage({
+          status: 'received',
+          customerName: body.customer.name,
+          orderId: id,
+          pin: randomPin,
+          total: body.total,
+          type: body.type,
+          items: body.items,
+        });
+        await sendWhatsAppMessage(env, phone, message);
+      }
+    } catch { /* WhatsApp dispatch non-blocking */ }
+
+    return Response.json({ ok: true, id, pin: randomPin }, { headers: cors() });
   } catch {
     return Response.json({ ok: false, error: 'Invalid payload' }, { status: 400, headers: cors() });
   }
@@ -170,6 +208,6 @@ function cors() {
   return {
     'Access-Control-Allow-Origin' : '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Auth-Token',
   };
 }

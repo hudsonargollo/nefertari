@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { LogOut, RefreshCw, Clock, MapPin, Package, CheckCircle2, Loader2, ChevronRight, Settings, X, Users } from 'lucide-react';
+import { LogOut, RefreshCw, Clock, MapPin, Package, CheckCircle2, Loader2, ChevronRight, Settings, X, Users, MessageCircle, Send, Sparkles, AlertCircle } from 'lucide-react';
 import { useTheme } from '../lib/useTheme';
 import ThemeToggle from './ThemeToggle';
 import PainelHeader from './PainelHeader';
@@ -14,6 +14,7 @@ const G = {
   dark: '#14100C', dark2: '#1E1509',
   parch: '#FAF5E8', sand: '#F5E6C8',
   muted: '#A89070', border: '#E8D9BA',
+  text: '#E8D9BA',
   bg: '#F2F0EC',
 };
 const serif = 'Playfair Display, Georgia, serif';
@@ -27,7 +28,7 @@ interface Order {
   customer: { name: string; phone: string };
   type: 'pickup' | 'delivery'; address?: string;
   items: OrderItem[]; total: number; notes?: string;
-  status: OrderStatus; created_at: string; updated_at: string;
+  status: OrderStatus; pin?: string; created_at: string; updated_at: string;
 }
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -147,9 +148,10 @@ function PinGate({ onAuth }: { onAuth: (token: string) => void }) {
 }
 
 // ─── Order Card ───────────────────────────────────────────────────────────────
-function OrderCard({ order, onStatusChange, updating, cardBg, cardBorder, itemBg }: {
+function OrderCard({ order, onStatusChange, onSendMessage, updating, cardBg, cardBorder, itemBg }: {
   order: Order;
   onStatusChange: (id: string, status: OrderStatus) => void;
+  onSendMessage: (order: Order) => void;
   updating: boolean;
   cardBg: string; cardBorder: string; itemBg: string;
 }) {
@@ -177,7 +179,14 @@ function OrderCard({ order, onStatusChange, updating, cardBg, cardBorder, itemBg
         {/* ID + customer */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
           <div>
-            <p style={{ fontFamily: serif, fontWeight: 700, fontSize: '1rem', color: G.dark }}>{order.id}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <p style={{ fontFamily: serif, fontWeight: 700, fontSize: '1rem', color: G.dark }}>{order.id}</p>
+              {order.pin && (
+                <span style={{ fontSize: '0.62rem', fontWeight: 700, background: G.sand, color: G.dark, padding: '0.1rem 0.4rem', borderRadius: '0.35rem', border: `1px solid ${G.border}` }}>
+                  PIN: {order.pin}
+                </span>
+              )}
+            </div>
             <p style={{ color: G.muted, fontSize: '0.82rem', marginTop: '0.1rem' }}>{order.customer.name}</p>
           </div>
           <div style={{ textAlign: 'right' }}>
@@ -218,41 +227,229 @@ function OrderCard({ order, onStatusChange, updating, cardBg, cardBorder, itemBg
         )}
 
         {/* actions */}
-        {cfg.next && (
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-            <button
-              onClick={() => cfg.next && onStatusChange(order.id, cfg.next)}
-              disabled={updating}
-              style={{
-                flex: 1, padding: '0.7rem', borderRadius: '0.75rem', border: 'none', cursor: 'pointer',
-                background: cfg.color, color: '#fff', fontWeight: 700, fontSize: '0.82rem',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem',
-                opacity: updating ? 0.7 : 1,
-              }}>
-              {updating
-                ? <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} />
-                : <><ChevronRight size={14} />{cfg.action}</>}
-            </button>
-            <button
-              onClick={() => onStatusChange(order.id, 'cancelled')}
-              disabled={updating}
-              style={{
-                padding: '0.7rem 0.85rem', borderRadius: '0.75rem', border: `1px solid ${G.border}`,
-                background: '#fff', cursor: 'pointer', color: '#b91c1c', display: 'flex', alignItems: 'center',
-              }}>
-              <X size={15} />
-            </button>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
+          {cfg.next ? (
+            <>
+              <button
+                onClick={() => cfg.next && onStatusChange(order.id, cfg.next)}
+                disabled={updating}
+                style={{
+                  flex: 1, padding: '0.7rem', borderRadius: '0.75rem', border: 'none', cursor: 'pointer',
+                  background: cfg.color, color: '#fff', fontWeight: 700, fontSize: '0.82rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem',
+                  opacity: updating ? 0.7 : 1,
+                }}>
+                {updating
+                  ? <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} />
+                  : <><ChevronRight size={14} />{cfg.action}</>}
+              </button>
+              <button
+                type="button"
+                onClick={() => onSendMessage(order)}
+                title="Enviar mensagem WhatsApp"
+                style={{
+                  padding: '0.7rem', borderRadius: '0.75rem', border: '1px solid rgba(37,211,102,0.35)',
+                  background: 'rgba(37,211,102,0.1)', cursor: 'pointer', color: '#25D366', display: 'flex', alignItems: 'center',
+                }}>
+                <MessageCircle size={15} />
+              </button>
+              <button
+                onClick={() => onStatusChange(order.id, 'cancelled')}
+                disabled={updating}
+                title="Cancelar pedido"
+                style={{
+                  padding: '0.7rem 0.85rem', borderRadius: '0.75rem', border: `1px solid ${G.border}`,
+                  background: '#fff', cursor: 'pointer', color: '#b91c1c', display: 'flex', alignItems: 'center',
+                }}>
+                <X size={15} />
+              </button>
+            </>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <button
+                type="button"
+                onClick={() => onSendMessage(order)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.35rem',
+                  padding: '0.5rem 0.85rem', borderRadius: '0.65rem',
+                  background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.3)',
+                  color: '#25D366', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600,
+                }}>
+                <MessageCircle size={14} /> Mensagem WhatsApp
+              </button>
+
+              {order.status === 'delivered' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: G.green, fontSize: '0.8rem' }}>
+                  <CheckCircle2 size={14} /> Entregue
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Send Message Modal ───────────────────────────────────────────────────────
+function SendMessageModal({ order, onClose }: { order: Order; onClose: () => void }) {
+  const firstName = order.customer?.name ? order.customer.name.trim().split(' ')[0] : 'Cliente';
+  const [msg, setMsg] = useState(
+    `Olá, ${firstName}! 🌿 Aqui é a Jéssica da Nefertari Cozinha Viva. Passando para falar sobre o seu pedido #${order.id}.`
+  );
+  const [sending, setSending] = useState(false);
+  const [result,  setResult]  = useState<{ ok?: boolean; error?: string } | null>(null);
+
+  const templates = [
+    {
+      label: '🌿 Saudação & Status',
+      text: `Olá, ${firstName}! 🌿 Aqui é a Jéssica da Nefertari. Seu pedido #${order.id} está sendo preparado com muito carinho e ingredientes frescos da nossa cozinha viva!`,
+    },
+    {
+      label: '🛵 Saiu para Entrega',
+      text: `Olá, ${firstName}! ✨ Boas notícias: seu pedido #${order.id} já foi finalizado e o entregador está a caminho do seu endereço. Bom apetite!`,
+    },
+    {
+      label: '🏡 Dúvida de Endereço',
+      text: `Olá, ${firstName}! 🌿 Da Nefertari. Nosso entregador está a caminho com seu pedido #${order.id}. Poderia nos confirmar algum ponto de referência próximo da sua casa?`,
+    },
+    {
+      label: '⏳ Tempo de Espera',
+      text: `Olá, ${firstName}! ✨ Como nossa cozinha faz cada receita artesanalmente do zero, seu pedido #${order.id} vai levar cerca de 10 minutinhos adicionais para ficar no ponto perfeito. Agradecemos a compreensão e o carinho!`,
+    },
+    {
+      label: '🔑 Enviar PIN de Acesso',
+      text: `Olá, ${firstName}! 🌿 Seu PIN exclusivo de acesso da Nefertari é *${order.pin || '1234'}*.\nAcompanhe seu pedido em: https://nefertari.clubemkt.digital/pedido?id=${order.id}`,
+    },
+  ];
+
+  async function handleSend() {
+    if (!msg.trim()) return;
+    setSending(true);
+    setResult(null);
+    try {
+      const res = await fetch('/api/whatsapp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: order.customer.phone,
+          text: msg,
+          orderId: order.id,
+          customerName: order.customer.name,
+        }),
+      });
+      const data = await res.json() as { ok: boolean; error?: string };
+      setResult(data);
+      if (data.ok) {
+        setTimeout(onClose, 1600);
+      }
+    } catch {
+      setResult({ ok: false, error: 'Erro de conexão.' });
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 85, backdropFilter: 'blur(4px)' }} />
+      <div style={{
+        position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+        width: 'min(460px, calc(100vw - 2rem))', background: G.dark, borderRadius: '1.5rem',
+        border: `1px solid ${G.border}`, zIndex: 86, padding: '1.75rem',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.6)', color: G.text,
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+          <div>
+            <p style={{ fontFamily: serif, fontSize: '1.15rem', fontWeight: 700, color: G.text, margin: 0 }}>
+              Mensagem WhatsApp
+            </p>
+            <p style={{ color: G.muted, fontSize: '0.8rem', marginTop: '0.2rem' }}>
+              Para: <strong>{order.customer.name}</strong> ({order.customer.phone})
+            </p>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+            <X size={18} color={G.muted} />
+          </button>
+        </div>
+
+        {/* Quick templates */}
+        <div style={{ marginBottom: '1rem' }}>
+          <p style={{ color: G.muted, fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>
+            Modelos no Tom da Marca
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            {templates.map(t => (
+              <button
+                key={t.label}
+                type="button"
+                onClick={() => setMsg(t.text)}
+                style={{
+                  background: 'rgba(255,255,255,0.05)', border: `1px solid ${G.border}`,
+                  padding: '0.3rem 0.65rem', borderRadius: '99px', color: G.text,
+                  fontSize: '0.72rem', cursor: 'pointer', fontFamily: 'Inter, system-ui, sans-serif',
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '1.25rem' }}>
+          <textarea
+            rows={4}
+            value={msg}
+            onChange={e => setMsg(e.target.value)}
+            placeholder="Escreva a mensagem personalizada..."
+            style={{
+              width: '100%', padding: '0.85rem 1rem', borderRadius: '0.75rem', boxSizing: 'border-box',
+              background: 'rgba(255,255,255,0.06)', border: `1px solid ${G.border}`,
+              color: G.text, fontSize: '0.88rem', fontFamily: 'Inter, system-ui, sans-serif', outline: 'none', resize: 'vertical',
+            }}
+          />
+        </div>
+
+        {result && (
+          <div style={{
+            fontSize: '0.82rem', marginBottom: '1rem',
+            color: result.ok ? '#25D366' : '#f87171',
+            display: 'flex', alignItems: 'center', gap: '0.35rem',
+          }}>
+            {result.ok ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+            {result.ok ? 'Mensagem enviada com sucesso!' : `Erro ao enviar: ${result.error || 'Verifique a conexão do WhatsApp'}`}
           </div>
         )}
 
-        {order.status === 'delivered' && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: G.green,
-                        fontSize: '0.8rem', justifyContent: 'center', paddingTop: '0.25rem' }}>
-            <CheckCircle2 size={14} /> Entregue com sucesso
-          </div>
-        )}
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              padding: '0.75rem 1.25rem', borderRadius: '99px',
+              background: 'none', border: `1px solid ${G.border}`,
+              color: G.muted, fontSize: '0.85rem', cursor: 'pointer',
+            }}
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onClick={handleSend}
+            disabled={sending || !msg.trim()}
+            style={{
+              padding: '0.75rem 1.5rem', borderRadius: '99px',
+              background: '#25D366', color: '#fff', border: 'none',
+              fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '0.4rem',
+            }}
+          >
+            {sending ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Send size={15} />}
+            Enviar Mensagem
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -339,12 +536,13 @@ function ChangePinModal({ token, onClose }: { token: string; onClose: () => void
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function Dashboard({ token, onLogout }: { token: string; onLogout: () => void }) {
   const { dark, T, toggle } = useTheme();
-  const [orders,    setOrders]    = useState<Order[]>([]);
-  const [loading,   setLoading]   = useState(true);
-  const [updating,  setUpdating]  = useState<string | null>(null);
-  const [tab,       setTab]       = useState<'active' | 'history'>('active');
-  const [pinModal,  setPinModal]  = useState(false);
-  const [newOrders, setNewOrders] = useState(0);
+  const [orders,       setOrders]       = useState<Order[]>([]);
+  const [loading,      setLoading]      = useState(true);
+  const [updating,     setUpdating]     = useState<string | null>(null);
+  const [tab,          setTab]          = useState<'active' | 'history'>('active');
+  const [pinModal,     setPinModal]     = useState(false);
+  const [messageOrder, setMessageOrder] = useState<Order | null>(null);
+  const [newOrders,    setNewOrders]    = useState(0);
   const prevIds = useRef<Set<string>>(new Set());
 
   const fetchOrders = useCallback(async () => {
@@ -499,6 +697,7 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
                       ) : colOrders.map(order => (
                         <OrderCard key={order.id} order={order}
                                    onStatusChange={updateStatus}
+                                   onSendMessage={setMessageOrder}
                                    updating={updating === order.id}
                                    cardBg={T.card} cardBorder={T.border} itemBg={T.bg} />
                       ))}
@@ -519,6 +718,7 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
               {history.map(order => (
                 <OrderCard key={order.id} order={order}
                            onStatusChange={updateStatus}
+                           onSendMessage={setMessageOrder}
                            updating={updating === order.id}
                            cardBg={T.card} cardBorder={T.border} itemBg={T.bg} />
               ))}
@@ -528,6 +728,7 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
       </div>
 
       {pinModal && <ChangePinModal token={token} onClose={() => setPinModal(false)} />}
+      {messageOrder && <SendMessageModal order={messageOrder} onClose={() => setMessageOrder(null)} />}
 
       <style>{`
         @keyframes spin  { to { transform: rotate(360deg); } }
